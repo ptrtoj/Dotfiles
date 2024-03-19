@@ -154,13 +154,6 @@
 (use-package abbrev
   :diminish)
 
-;; (use-package company
-;;   :ensure t
-;;   :diminish
-;;   :hook
-;;   (prog-mode . company-mode)
-;;   (org-mode . company-mode))
-
 ;;; 3rd Party Packages
 (use-package diminish
   :ensure t)
@@ -185,3 +178,10 @@
   :config
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
+
+;; (use-package company
+;;   :ensure t
+;;   :diminish
+;;   :hook
+;;   (prog-mode . company-mode)
+;;   (org-mode . company-mode))
