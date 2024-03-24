@@ -76,8 +76,8 @@
 ;;; Fonts
 (use-package faces
   :config
-  ;;(set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-  ;;(set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
+  (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+  (set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
   (add-to-list 'default-frame-alist '(font . "Berkeley Mono")))
 
 (use-package whitespace
