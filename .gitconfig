@@ -1,7 +1,7 @@
 [user]
 	name = WooHyoung Jeon
 	email = jeon@ptrtoj.com
-	signingkey = 55D05C3B9506800FE31A50BBF2426E1EB1192CF7
+	signingkey = 6B571713E894EC43
 [alias]
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
 [commit]
