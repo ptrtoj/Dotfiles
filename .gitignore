@@ -1,2 +1,13 @@
 # MacOS
 .DS_Store
+
+# Emacs
+.last-package-update-day
+auto-save-list/
+custom.el
+elpa/
+history
+places
+recentf
+transient/
+tree-sitter/
