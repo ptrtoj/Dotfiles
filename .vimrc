@@ -63,7 +63,7 @@ set nobackup
 "set undodir     =$HOME/.vim/files/undo/
 "set viminfo     ='100,n$HOME/.vim/files/info/viminfo
 
-colorscheme  zellner
+"colorscheme  zellner
 
 " Auto insert comment character
 autocmd FileType c,cpp set formatoptions+=ro
