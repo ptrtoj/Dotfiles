@@ -1,18 +1,16 @@
 # Personal Dotfiles
 
-## `Brewfile`
+## `.emacs.d`
 
-Generated with 
+Integrated `Jeamcs` repository to here.
 
-```
-brew bundle dump --file=./Brewfile
+```bash
+ln -sv /git/repo/location/.emacs.d ~/.emacs.d
 ```
 
-On a new machine, install all programs with
+## `.gnupg/gpg.conf`
 
-```
-brew bundle install --file=./Brewfile
-```
+Added Preferred keyserver
 
 ## `.gitconfig`
 
@@ -22,10 +20,28 @@ brew bundle install --file=./Brewfile
 
 .
 
-## `.gnupg/gpg.conf`
+## `.vimrc`
 
-Added Preferred keyserver
+minimal vim config file
+
+```bash
+ln -sv /git/repo/location/.vimrc ~/.vimrc
+```
 
 ## `.zprofile`, `.zshrc`
 
 .
+
+## `Brewfile`
+
+Generated with
+
+```bash
+brew bundle dump --file=./Brewfile
+```
+
+On a new machine, install all programs with
+
+```bash
+brew bundle install --file=./Brewfile
+```
