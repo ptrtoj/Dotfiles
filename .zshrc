@@ -1,5 +1,5 @@
 # Alias
-alias v="vim"
+alias v="nvim"
 
 # PATH
 export PATH="/Users/jeon/.local/bin/:$PATH"
