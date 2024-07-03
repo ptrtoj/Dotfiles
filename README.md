@@ -4,6 +4,10 @@
 
 Integrated `Jeamcs` repository to here.
 
+### system dependency
+
+on MacOS, you can install GUI version emacs with `brew install --cask emacs`.
+
 ```bash
 ln -sv /git/repo/location/.emacs.d ~/.emacs.d
 ```
@@ -12,13 +16,13 @@ ln -sv /git/repo/location/.emacs.d ~/.emacs.d
 
 Added Preferred keyserver
 
+### system dependency
+
+on MacOS, you'll need `gnupg`, `pinentry-mac`.
+
 ## `.gitconfig`
 
 `Git` config files
-
-## `.gitignore`
-
-.
 
 ## `.vimrc`
 
@@ -34,7 +38,11 @@ ln -sv /git/repo/location/.vimrc ~/.vimrc
 
 ## `Brewfile`
 
+### system dependency
+
+`hoembrew`.
 Generated with
+
 
 ```bash
 brew bundle dump --file=./Brewfile
