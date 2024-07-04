@@ -1,5 +1,17 @@
 # Personal Dotfiles
 
+## `/.config/nvim`
+
+`Neovim` configuration
+
+### system dependency
+
+`ripgrep`, `fd`
+
+```bash
+ln -sv /git/repo/location/.config/nvim ~/.config/nvim
+```
+
 ## `.emacs.d`
 
 Integrated `Jeamcs` repository to here.
