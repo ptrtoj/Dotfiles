@@ -16,9 +16,13 @@ ln -sv /git/repo/location/.config/nvim ~/.config/nvim
 
 Integrated `Jeamcs` repository to here.
 
+There are two `init.el` file. One is `modular-init.el` which will use
+modules under the `lisp` directory. Another one is combined `init` file.
+(Modular one is not updated from 24/07/05)
+
 ### system dependency
 
-on MacOS, you can install GUI version emacs with `brew install --cask emacs`.
+- on MacOS, you can install GUI version emacs with `brew install --cask emacs`.
 
 ```bash
 ln -sv /git/repo/location/.emacs.d ~/.emacs.d
@@ -30,7 +34,10 @@ Added Preferred keyserver
 
 ### system dependency
 
-on MacOS, you'll need `gnupg`, `pinentry-mac`.
+on MacOS, you'll need
+
+- `gnupg`
+- `pinentry-mac`.
 
 ## `.gitconfig`
 
