@@ -11,3 +11,6 @@ places
 recentf
 transient/
 tree-sitter/
+
+# Neovim
+lazy-lock.json
