@@ -2,7 +2,9 @@
 .DS_Store
 
 # Emacs
+.cache/
 .last-package-update-day
+.lsp-session-v1
 auto-save-list/
 custom.el
 elpa/
