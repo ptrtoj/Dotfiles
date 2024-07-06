@@ -1,22 +1,23 @@
 # Personal Dotfiles
 
-## `/.config/nvim`
+Repo includes below
 
-`Neovim` configuration
+## Neovim config
 
 ### system dependency
 
-`ripgrep`, `fd`
+- `ripgrep`
+- `fd`
 
 ```bash
 ln -sv /git/repo/location/.config/nvim ~/.config/nvim
 ```
 
-## `.emacs.d`
+## Emacs config
 
 Integrated `Jeamcs` repository to here.
 
-There are two `init.el` file. One is `modular-init.el` which will use
+There are two `init.el` file. One is `modular-init.el` which uses
 modules under the `lisp` directory. Another one is combined `init` file.
 (Modular one is not updated from 24/07/05)
 
@@ -28,9 +29,9 @@ modules under the `lisp` directory. Another one is combined `init` file.
 ln -sv /git/repo/location/.emacs.d ~/.emacs.d
 ```
 
-## `.gnupg/gpg.conf`
+## GnuPG config
 
-Added Preferred keyserver
+Added preferred keyserver
 
 ### system dependency
 
@@ -39,29 +40,24 @@ on MacOS, you'll need
 - `gnupg`
 - `pinentry-mac`.
 
-## `.gitconfig`
+## Git config
 
-`Git` config files
 
-## `.vimrc`
-
-minimal vim config file
+## Vim config
 
 ```bash
 ln -sv /git/repo/location/.vimrc ~/.vimrc
 ```
 
-## `.zprofile`, `.zshrc`
+## zsh config
 
-.
-
-## `Brewfile`
+## Homebrew package lsit
 
 ### system dependency
 
-`hoembrew`.
-Generated with
+- `homebrew`.
 
+Generated with
 
 ```bash
 brew bundle dump --file=./Brewfile
