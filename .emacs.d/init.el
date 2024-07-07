@@ -161,7 +161,7 @@
 ;; $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.aff
 ;; $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.dic
 (use-package flyspell
-  ;;:diminish
+  :diminish
   :config
   (setq ispell-program-name "hunspell")
   (setq ispell-local-dictionary "en_US")
