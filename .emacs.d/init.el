@@ -2,7 +2,13 @@
 
 ;;; Commentary:
 ;; Jeon's Extermely Minimal `ALT` + `CTRL` + `SHIFT`
-
+;;
+;; Really trying to add only the things I 'require'.
+;; But time to time, some packages were added with no specific needs
+;;
+;; When I re-check my config, if I found some unnecessary packages,
+;; I moved them to the 'archive.el' for later reference.
+;;
 ;; Semicolons matter (See: "D.7 Tips on Writing Comments", https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html)
 
 ;;; Code:
@@ -35,10 +41,7 @@
 ;;;; Diminish
 ;; hide unnecessary minor mode notifications
 (use-package diminish
-  :ensure t
-  :config
-  (diminish 'outline-minor-mode)
-  (diminish 'auto-revert-mode))
+  :ensure t)
 
 ;;; Defaults
 ;;;; Emacs
@@ -50,6 +53,8 @@
   (use-short-answers t)
   ;; do not show welcome screen
   (inhibit-startup-screen t)
+  ;; Disable audible bell, rather blink the screen
+  (visible-bell t)
   ;; vertico recommends below
   :init
   (defun crm-indicator (args)
@@ -97,6 +102,10 @@
   :config
   (save-place-mode 1))
 
+;;;; Auto Revert
+(use-package autorevert
+  :diminish (auto-revert-mode))
+
 ;;;; Vertico
 (use-package vertico
   :ensure t
@@ -139,7 +148,6 @@
 ;;;; Whitespace
 ;; remove trailing white-spaces before save
 (use-package whitespace
-  ;;:diminish
   ;; show whitespace with colors
   ;;:custom
   ;;(whitespace-style '(face tabs tab-mark trailing))
@@ -169,6 +177,169 @@
   (text-mode . flyspell-mode)
   (prog-mode . flyspell-prog-mode))
 
+;;;; [TODO] Abbreviation
+(use-package abbrev
+  :diminish)
+
+;;;; Outline Mode
+;; a way to better organizing 'init.el' file
+;; (See: https://www.reddit.com/r/emacs/comments/a6tu8y/outlineminormode_for_emacs_maybe_useful/ )
+(use-package outline
+  :diminish (outline-minor-mode)
+  :hook
+  (outline-minor-mode . (lambda ()
+			  (define-key
+			   outline-minor-mode-map
+			   (kbd "<tab>")
+			   '(menu-item "" nil :filter
+				       (lambda
+					 (&optional _)
+					 (when (outline-on-heading-p)
+					   'outline-cycle))))
+			  (define-key outline-minor-mode-map (kbd "<backtab>")
+				      '(lambda()
+					 (interactive)
+					 (save-excursion
+					   (goto-char (point-min))
+					   (outline-show-all)
+					   (outline-hide-leaves))))
+			  (define-key outline-minor-mode-map (kbd "C-S-<tab>")
+				      '(lambda()
+					 (interactive)
+					 (save-excursion
+					   (goto-char (point-min))
+					   (outline-hide-body)))))))
+
+;;;; Display Table
+;; fix '...' at the end of the headers
+(use-package disp-table
+  :config
+  (set-display-table-slot standard-display-table
+			  'selective-display
+			  (string-to-vector " ↪ More...")))
+
+;;; Key Bindings
+;;;; Which Key
+(use-package which-key
+  :ensure t
+  :diminish
+  :custom
+  (which-key-mode 1))
+
+;;;; Personal Keys
+(use-package bind-keys
+  :bind
+  ("C-c k" . describe-personal-keybindings))
+
+;;;; [DROP] Vim Keys
+(use-package evil
+ :ensure t
+ :init
+ (setq evil-want-C-u-scroll t)
+ (setq evil-vsplit-window-right t)
+ :config
+ (evil-mode 1))
+
+;;; Git
+(use-package magit
+  :ensure t
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+;;; Programming
+;;;; LSP
+(use-package eglot
+  :hook
+  (c-mode . eglot-ensure))
+
+;;;; Eldoc
+(use-package eldoc
+  :diminish
+  ;;hook
+  ;;(emacs-lisp-mode . eldoc-mode)
+  ;;(lisp-interaction-mode . eldoc-mode)
+  ;;(ielm-mode-hook . eldoc-mode)
+  )
+
+;;;; Treesitter
+(use-package tree-sitter
+  :ensure t
+  :init
+  (global-tree-sitter-mode)
+  :hook
+  (tree-sitter-after-on . tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs
+  :ensure t
+  :after (tree-sitter))
+
+;;;; Snippets
+;; helper function
+(defun jeon/company-add-yas-backend (backends)
+  "Add yas data to company.
+  \\='BACKENDS\\=' argument gets old company backends list"
+  (if (and (listp backends) (memq 'company-yasnippet backends))
+      backends
+    (append (if (consp backends)
+		backends
+	      (list backends))
+	    '(:with company-yasnippet))))
+
+;; snippet engine
+(use-package yasnippet
+  :ensure t
+  :diminish (yas-minor-mode)
+  :config
+  (yas-reload-all)
+  :hook
+  (prog-mode . yas-minor-mode))
+
+;; actual snippets
+(use-package yasnippet-snippets
+  :ensure t)
+
+;;;; Auto Complete
+;; completion engine
+(use-package company
+  :ensure t
+  :diminish
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0)
+  :bind
+  (:map company-active-map
+	("M-/" . company-complete))
+  :init
+  (global-company-mode)
+  :config
+  (setq company-backends (mapcar #'jeon/company-add-yas-backend company-backends)))
+
+;; improve company UI
+(use-package company-box
+  :ensure t
+  :diminish
+  :hook
+  (company-mode . company-box-mode))
+
+;;;; Fix MacOS Shell Path Problem
+(use-package exec-path-from-shell
+  :ensure t
+  :custom
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
+;;; Language Specific Settings
+;;;; C
+(use-package cc-mode
+  :diminish
+  :custom
+  (c-basic-offset 4))
+
+;; Local Variables:
+;; outline-regexp: "^;;[;]+ "
+;; eval: (outline-minor-mode 1)
+;; eval: (outline-hide-sublevels 4)
+;; End:
 ;;; UI
 ;;;; Remove Tool Bar
 (use-package tool-bar
@@ -181,6 +352,16 @@
   (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
   (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
   (add-to-list 'default-frame-alist '(font . "BerkeleyMono Nerd Font"))
+  ;; Fullscreen on startup
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  ;; Transparency
+  ;; Emacs 29 introduced below, but doesn't work on Macos.
+  ;;(set-frame-parameter nil 'alpha-background 90)
+  ;;(add-to-list 'default-frame-alist '(alpha-background . 90))
+  ;; Rather this works (the old way).
+  (set-frame-parameter (selected-frame) 'alpha '(95 95))
+  (add-to-list 'default-frame-alist '(alpha 95 95))
+  ;; Default width and height
   ;;(add-to-list 'default-frame-alist (cons 'width 120))
   ;;(add-to-list 'default-frame-alist (cons 'height 70)))
   )
@@ -225,172 +406,27 @@
   :config
   (load-theme 'nord t))
 
-;;;; Modeline
+;;;; [DROP] Modeline
 ;; run: M-x nerd-icons-install-fonts
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1))
+;;(use-package doom-modeline
+;;  :ensure t
+;;  :init (doom-modeline-mode 1))
 
-;;;; Icons for Minibuffer
+;;;; [DROP] Icons for Minibuffer
 ;; doom-modeline installs nerd-icons
-(use-package nerd-icons-completion
-  :ensure t
-  :after marginalia
-  :config
-  (nerd-icons-completion-mode)
-  :hook
-  (marginalia-mode . nerd-icons-completion-marginalia-setup))
+;;(use-package nerd-icons-completion
+;;  :ensure t
+;;  :after marginalia
+;;  :config
+;;  (nerd-icons-completion-mode)
+;;  :hook
+;;  (marginalia-mode . nerd-icons-completion-marginalia-setup))
 
-;;;; Icons for Dired
-(use-package nerd-icons-dired
-  :ensure t
-  :hook
-  (dired-mode . nerd-icons-dired-mode))
+;;;; [DROP] Icons for Dired
+;; doom-modeline installs nerd-icons
+;;(use-package nerd-icons-dired
+;;  :ensure t
+;;  :hook
+;;  (dired-mode . nerd-icons-dired-mode))
 
-;;; Key Bindings
-;;;; Which Key
-(use-package which-key
-  :ensure t
-  :diminish
-  :custom
-  (which-key-mode 1))
-
-;;;; Personal Keys
-(use-package bind-keys
-  :bind
-  ("C-c k" . describe-personal-keybindings))
-
-;;;; Vim Keys
-(use-package evil
-  :ensure t
-  :init
-  (setq evil-want-C-u-scroll t)
-  (setq evil-vsplit-window-right t)
-  :config
-  (evil-mode 1))
-
-;;; Git
-(use-package magit
-  :ensure t
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-;;; Programming
-;;;; LSP
-(use-package eglot
-  :hook
-  (c-mode . eglot-ensure))
-
-;;;; Eldoc
-(use-package eldoc
-  :diminish
-  ;;hook
-  ;;(emacs-lisp-mode . eldoc-mode)
-  ;;(lisp-interaction-mode . eldoc-mode)
-  ;;(ielm-mode-hook . eldoc-mode)
-  )
-
-;;;; Treesitter
-(use-package tree-sitter
-  :ensure t
-  :init
-  (global-tree-sitter-mode)
-  :hook
-  (tree-sitter-after-on . tree-sitter-hl-mode))
-
-(use-package tree-sitter-langs
-  :ensure t
-  :after (tree-sitter))
-
-;;;; Snippets
-;; yasnippet helper function
-(defun jeon/company-add-yas-backend (backends)
-  "Add yas data to company.
-  \\='BACKENDS\\=' argument gets old company backends list"
-  (if (and (listp backends) (memq 'company-yasnippet backends))
-      backends
-    (append (if (consp backends)
-		backends
-	      (list backends))
-	    '(:with company-yasnippet))))
-
-;; yasnippet
-(use-package yasnippet
-  :ensure t
-  :diminish (yas-minor-mode)
-  :config
-  (yas-reload-all)
-  :hook
-  (prog-mode . yas-minor-mode))
-
-(use-package yasnippet-snippets
-  :ensure t)
-
-;;;; Auto Complete
-(use-package company
-  :ensure t
-  :diminish
-  :custom
-  (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0)
-  :bind
-  (:map company-active-map
-	("M-/" . company-complete))
-  :init
-  (global-company-mode)
-  :config
-  (setq company-backends (mapcar #'jeon/company-add-yas-backend company-backends)))
-
-(use-package company-box
-  :ensure t
-  :diminish
-  :hook
-  (company-mode . company-box-mode))
-
-;;;; Fix MacOS Shell Path Problem
-(use-package exec-path-from-shell
-  :ensure t
-  :custom
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
-
-;;; For Outline Mode
-;;(See: https://www.reddit.com/r/emacs/comments/a6tu8y/outlineminormode_for_emacs_maybe_useful/ )
-(use-package outline
-  :diminish
-  :hook
-  (outline-minor-mode . (lambda ()
-			  (define-key
-			   outline-minor-mode-map
-			   (kbd "<tab>")
-			   '(menu-item "" nil :filter
-				       (lambda
-					 (&optional _)
-					 (when (outline-on-heading-p)
-					   'outline-cycle))))
-			  (define-key outline-minor-mode-map (kbd "<backtab>")
-				      '(lambda()
-					 (interactive)
-					 (save-excursion
-					   (goto-char (point-min))
-					   (outline-show-all)
-					   (outline-hide-leaves))))
-			  (define-key outline-minor-mode-map (kbd "C-S-<tab>")
-				      '(lambda()
-					 (interactive)
-					 (save-excursion
-					   (goto-char (point-min))
-					   (outline-hide-body)))))))
-
-(use-package disp-table
-  :config
-  (set-display-table-slot standard-display-table
-			  'selective-display
-			  (string-to-vector " ↪ More...")))
-
-;; Local Variables:
-;; outline-regexp: "^;;[;]+ "
-;; eval: (outline-minor-mode 1)
-;; eval: (outline-hide-sublevels 4)
-;; End:
 ;;; init.el ends here
