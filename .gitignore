@@ -9,6 +9,7 @@ auto-save-list/
 custom.el
 elpa/
 history
+init.el
 places
 recentf
 transient/
