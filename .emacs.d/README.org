@@ -1,0 +1,569 @@
+#+TITLE: JEAMCS
+#+PROPERTY: header-args:elisp :tangle ./init.el
+#+STARTUP: content
+
+* Jeon's Extreme Minimal CTRL + ALT + SHIFT
+
+Really trying to add only the things I 'require' but time to time, some packages were added with no specific needs.
+
+(Semicolons matter, see: [[ https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html][D.7 Tips on Writing Comments]])
+
+** Follow Basic Structure
+#+begin_src elisp
+  ;;; init.el -*- coding: utf-8; lexical-binding: t -*-
+
+  ;;; Commentary:
+
+  ;;; Code:
+#+end_src
+
+** Prevent ~custom.el~
+
+Prevent emacs from appending ~custom~ parts into this file, rather put them to ~custom.el~.
+
+#+begin_src elisp
+  (setq custom-file (concat user-emacs-directory "custom.el"))
+  (when (file-exists-p custom-file)
+    (load custom-file))
+#+end_src
+
+** Packages Manager Related
+*** Initialize Package Contents
+
+(~package-refresh-contents~ was moved to ~auto-package-update~ config section)
+
+#+begin_src elisp
+  (use-package package
+    :config
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+    (package-initialize)
+    (unless package-archive-contents
+      (package-refresh-contents)))
+#+end_src
+
+*** Auto Update Packages
+#+begin_src elisp
+  (use-package auto-package-update
+    :ensure t
+    :bind
+    ("C-c u p" . package-refresh-contents)
+    ("C-c u g" . auto-package-update-now-async)
+    :custom
+    (setq auto-package-update-prompt-before-update t)
+    (setq auto-package-update-delete-old-versions t))
+#+end_src
+
+*** Diminish
+
+Hide unnecessary minor-mode names from modeline.
+
+#+begin_src elisp
+  (use-package diminish
+    :ensure t)
+#+end_src
+
+** Editor Settings
+*** Defaults
+#+begin_src elisp
+  (use-package emacs
+    :custom
+    (user-full-name "WooHyoung Jeon")
+    (user-mail-address "jeon@ptrtoj.com")
+    ;; yes-or-no to y-or-n
+    (use-short-answers t)
+    ;; do not show welcome screen
+    (inhibit-startup-screen t)
+    ;; Disable audible bell, rather blink the screen
+    (visible-bell t)
+    ;; vertico recommends below
+    :init
+    (defun crm-indicator (args)
+      (cons (format "[CRM%s] %s"
+		    (replace-regexp-in-string
+		     "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+		     crm-separator)
+		    (car args))
+	    (cdr args)))
+    (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
+    ;; Do not allow the cursor in the minibuffer prompt
+    (setq minibuffer-prompt-properties
+	  '(read-only t cursor-intangible t face minibuffer-prompt))
+    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+    ;; Support opening new minibuffers from inside existing minibuffers.
+    (setq enable-recursive-minibuffers t)
+
+    ;; Emacs 28 and newer: Hide commands in M-x which do not work in the current
+    ;; mode.  Vertico commands are hidden in normal buffers. This setting is
+    ;; useful beyond Vertico.
+    (setq read-extended-command-predicate #'command-completion-default-include-p))
+#+end_src
+
+*** Files
+
+Prevent emacs making backup files
+
+#+begin_src elisp
+  (use-package files
+    :custom
+    (make-backup-files nil))
+#+end_src
+
+*** Recnetf
+
+Remember recently visited files list.
+
+#+begin_src elisp
+  (use-package recentf
+    :bind
+    ("C-x C-r" . recentf-open-files)
+    :config
+    (recentf-mode 1))
+#+end_src
+
+*** Savehist
+
+Remember recently used commands.
+
+#+begin_src elisp
+  (use-package savehist
+    :config
+    (savehist-mode 1))
+#+end_src
+
+*** Saveplace
+
+Remember last cursor position in file.
+
+#+begin_src elisp
+  ;;;; Save Last Position
+  (use-package saveplace
+    :config
+    (save-place-mode 1))
+#+end_src
+
+*** Autorevert
+
+Apply change in another window automatically.
+
+#+begin_src elisp
+  (use-package autorevert
+    :diminish (auto-revert-mode))
+#+end_src
+
+*** Vertico
+
+Better minibuffer.
+
+#+begin_src elisp
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode))
+#+end_src
+
+*** Orderless
+
+For better search results.
+
+#+begin_src elisp
+  (use-package orderless
+    :ensure t
+    :init
+    (setq completion-styles '(orderless basic)
+	  completion-category-defaults nil
+	  completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+*** Marginalia
+
+Add summarized explanation onto minibuffer list.
+
+#+begin_src elisp
+  (use-package marginalia
+    :ensure t
+    :init
+    (marginalia-mode))
+#+end_src
+
+*** [TODO] Consult
+*** [TODO] Embark
+
+** Editing
+*** delsel
+
+Delete selection as I type.
+
+#+begin_src elisp
+  (use-package delsel
+    :config
+    (delete-selection-mode 1))
+#+end_src
+
+*** elec-pair
+
+Auto insert parenthesis.
+
+#+begin_src elisp
+  (use-package elec-pair
+    :hook
+    (prog-mode . electric-pair-mode)
+    (org-mode . electric-pair-mode))
+#+end_src
+
+*** whitespace
+
+Automatically remove trailing whitespace.
+
+#+begin_src elisp
+  (use-package whitespace
+    ;; show whitespace with colors
+    ;;:custom
+    ;;(whitespace-style '(face tabs tab-mark trailing))
+    ;;(custom-set-faces '(whitespace-tab ((t (:foreground "#eeeeee")))))
+    :hook
+    ;; (prog-mode . whitespace-mode)
+    (before-save . whitespace-cleanup))
+#+end_src
+
+*** flyspell
+
+Check spelling errors.
+
+**** System dependency
+- hunspell
+- And also dictionary files
+  - '*.aff' && '*.dic' (e.g. 'en_US.aff' and 'en_US.dic')
+
+Dictionary files should be placed in ~~/Library/Spelling/~ or ~/Library/Spelling/~.
+
+Homebrew itself doesn't provide dictionaries for Hunspell, but you can download compatible dictionaries from other sources,
+such as [[https://cgit.freedesktop.org/libreoffice/dictionaries/tree/][this]].
+
+#+begin_src sh :tangle no
+ $ cd ~/Library/Spelling/
+ $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.aff
+ $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.dic
+#+end_src
+
+#+begin_src elisp
+  (use-package flyspell
+    :diminish
+    :config
+    (setq ispell-program-name "hunspell")
+    (setq ispell-local-dictionary "en_US")
+    :hook
+    (text-mode . flyspell-mode)
+    (prog-mode . flyspell-prog-mode))
+#+end_src
+
+*** [TODO] abbrev
+
+#+begin_src elisp
+  (use-package abbrev
+    :diminish)
+#+end_src
+
+*** [DROP] editorconfig
+
+(See: [[https://www.kernel.org/doc/html/latest/process/coding-style.html][Linux kernel coding style, 9) You’ve made a mess of it]], and [[https://editorconfig.org][project website]])
+
+#+begin_src elisp
+  (use-package editorconfig
+    :ensure t
+    :hook
+    (prog-mode . editorconfig-mode))
+#+end_src
+
+** Key Bindings
+*** Which-key
+#+begin_src elisp
+  (use-package which-key
+    :ensure t
+    :diminish
+    :custom
+    (which-key-mode 1))
+#+end_src
+
+*** Bind-keys
+#+begin_src elisp
+  (use-package bind-keys
+    :bind
+    ("C-c k" . describe-personal-keybindings))
+#+end_src
+
+*** Evil
+#+begin_src elisp
+  (use-package evil
+    :ensure t
+    :custom
+    (evil-want-C-u-scroll t)
+    (evil-vsplit-window-right t)
+    (evil-want-C-i-jump nil)
+    :config
+    (evil-mode 1))
+#+end_src
+
+** Org Mode
+*** [TODO] Helper Function
+
+Doesn't seem to work!!!
+
+#+begin_src elisp
+  (defun libj/org-tangle-on-save ()
+    (when (string-equal (buffer-file-name)
+			(expand-file-name "~/.emacs.d/README.org"))
+      (let ((org-confirm-babel-evaluate nil))
+	(org-babel-tangle))))
+
+    (add-hook 'org-mode-hook
+	      (lambda ()
+		(add-hook 'after-save-hook #'libj/org-tangle-on-save)))
+	#+end_src
+
+*** Org
+#+begin_src elisp
+  (use-package org
+    :custom
+    (org-todo-keywords
+     '((sequence "[TODO]" "|" "[DONE]" "[DROP]")))
+    (org-todo-keyword-faces '(("[TODO]" . "red")
+			       ("[DONE]" . "green")
+			       ("[DROP]" . "gray"))))
+#+end_src
+
+** Git
+*** Magit
+#+begin_src elisp
+  (use-package magit
+    :ensure t
+    :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+#+end_src
+
+** Programming
+*** Eglot
+#+begin_src elisp
+  (use-package eglot
+    :hook
+    (c-mode . eglot-ensure))
+#+end_src
+
+*** Eldoc
+#+begin_src elisp
+  (use-package eldoc
+    :diminish
+    ;;hook
+    ;;(emacs-lisp-mode . eldoc-mode)
+    ;;(lisp-interaction-mode . eldoc-mode)
+    ;;(ielm-mode-hook . eldoc-mode)
+    )
+#+end_src
+
+*** Treesitter
+#+begin_src elisp
+  (use-package tree-sitter
+    :ensure t
+    :init
+    (global-tree-sitter-mode)
+    :hook
+    (tree-sitter-after-on . tree-sitter-hl-mode))
+
+  (use-package tree-sitter-langs
+    :ensure t
+    :after (tree-sitter))
+#+end_src
+
+*** yasnippet
+**** helper function
+
+#+begin_src elisp
+  (defun libj/company-add-yas-backend (backends)
+    "Add yas data to company.
+      \\='BACKENDS\\=' argument gets old company backends list"
+    (if (and (listp backends) (memq 'company-yasnippet backends))
+	backends
+      (append (if (consp backends)
+		  backends
+		(list backends))
+	      '(:with company-yasnippet))))
+#+end_src
+
+**** yasnippet
+#+begin_src elisp
+  (use-package yasnippet
+    :ensure t
+    :diminish (yas-minor-mode)
+    :config
+    (yas-reload-all)
+    :hook
+    (prog-mode . yas-minor-mode))
+
+  ;; actual snippets
+  (use-package yasnippet-snippets
+    :ensure t)
+#+end_src
+
+*** Company
+#+begin_src elisp
+  (use-package company
+    :ensure t
+    :diminish
+    :custom
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0)
+    :bind
+    (:map company-active-map
+	  ("M-/" . company-complete))
+    :init
+    (global-company-mode)
+    :config
+    (setq company-backends (mapcar #'libj/company-add-yas-backend company-backends)))
+
+  (use-package company-box
+    :ensure t
+    :diminish
+    :hook
+    (company-mode . company-box-mode))
+#+end_src
+
+*** Fix MacOS Shell Path Probelm
+#+begin_src
+  (use-package exec-path-from-shell
+    :ensure t
+    :custom
+    (when (memq window-system '(mac ns x))
+      (exec-path-from-shell-initialize)))
+#+end_src
+
+** Language Specifics
+*** C
+#+begin_src elisp
+  (use-package cc-mode
+    :diminish
+    :custom
+    (c-basic-offset 4))
+#+end_src
+
+** UI
+*** Disable Toolbar
+#+begin_src elisp
+  (use-package tool-bar
+    :config
+    (tool-bar-mode -1))
+#+end_src
+
+*** Faces (fonts and frame)
+#+begin_src elisp
+  (use-package faces
+    :config
+    (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
+    (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+    (add-to-list 'default-frame-alist '(font . "BerkeleyMono Nerd Font"))
+    ;; Fullscreen on startup
+    (add-to-list 'default-frame-alist '(fullscreen . maximized))
+    ;; Transparency
+    ;; Emacs 29 introduced below, but doesn't work on Macos.
+    ;;(set-frame-parameter nil 'alpha-background 90)
+    ;;(add-to-list 'default-frame-alist '(alpha-background . 90))
+    ;; Rather this works (the old way).
+    (set-frame-parameter (selected-frame) 'alpha '(95 95))
+    (add-to-list 'default-frame-alist '(alpha 95 95))
+    ;; Default width and height
+    ;;(add-to-list 'default-frame-alist (cons 'width 120))
+    ;;(add-to-list 'default-frame-alist (cons 'height 70)))
+    )
+#+end_src
+
+*** Show Line Numbers
+#+begin_src elisp
+  (use-package display-line-numbers
+    :custom
+    (display-line-numbers-type 'relative)
+    ;; prevent right shift when carry occurs (90->100)
+    (display-line-numbers-width-start t)
+    :hook
+    (prog-mode . display-line-numbers-mode)
+    (markdown-mode . display-line-numbers-mode)
+    (org-mode . display-line-numbers-mode))
+#+end_src
+
+*** Show Column Numbers
+#+begin_src elisp
+  (use-package simple
+    :config
+    (column-number-mode 1))
+#+end_src
+
+*** Max Column Indicator
+#+begin_src elisp
+  (use-package display-fill-column-indicator
+    :hook
+    (prog-mode . display-fill-column-indicator-mode)
+    (markdown-mode . display-fill-column-indicator-mode)
+    (org-mode . display-fill-column-indicator-mode))
+#+end_src
+
+*** Highlight Current Cursor Line
+#+begin_src elisp
+  (use-package hl-line
+    :config
+    (global-hl-line-mode 1))
+#+end_src
+
+*** Show URL as a clickable link
+#+begin_src elisp
+  (use-package goto-addr
+    :hook
+    (prog-mode . goto-address-prog-mode)
+    (text-mode . goto-address-prog-mode))
+#+end_src
+
+*** Color Theme
+#+begin_src elisp
+  (use-package catppuccin-theme
+    :ensure t
+    :custom
+    (catppuccin-flavor 'latte)
+    :config
+    (load-theme 'catppuccin t))
+#+end_src
+
+*** [DROP] Modeline
+#+begin_src elisp
+  ;; run: M-x nerd-icons-install-fonts
+  ;;(use-package doom-modeline
+  ;;  :ensure t
+  ;;  :init (doom-modeline-mode 1))
+#+end_src
+
+*** [DROP] Icons for Minibuffer
+#+begin_src elisp
+  ;; doom-modeline installs nerd-icons
+  ;;(use-package nerd-icons-completion
+  ;;  :ensure t
+  ;;  :after marginalia
+  ;;  :config
+  ;;  (nerd-icons-completion-mode)
+  ;;  :hook
+  ;;  (marginalia-mode . nerd-icons-completion-marginalia-setup))
+#+end_src
+
+*** [DROP] Dired Icons
+#+begin_src elisp :tangle no
+;;;; [DROP] Icons for Dired
+;; doom-modeline installs nerd-icons
+;;(use-package nerd-icons-dired
+;;  :ensure t
+;;  :hook
+;;  (dired-mode . nerd-icons-dired-mode))
+
+;;; init.el ends here
+#+end_src
+
+** [DROP] Using Outline to Fold Headlines
+
+There's also a way to organizing ~init.el~ better with ~outline mode~ and ~display mode~ with ~local vars~.
+
+Refer to my ~init.el.orig~ or see [[https://www.reddit.com/r/emacs/comments/a6tu8y/outlineminormode_for_emacs_maybe_useful][this]].
