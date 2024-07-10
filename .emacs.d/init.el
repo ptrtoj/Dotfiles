@@ -218,6 +218,12 @@
 			  'selective-display
 			  (string-to-vector " ↪ More...")))
 
+;;;; Editor Config
+(use-package editorconfig
+  :ensure t
+  :hook
+  (prog-mode . editorconfig-mode))
+
 ;;; Key Bindings
 ;;;; Which Key
 (use-package which-key
@@ -233,12 +239,12 @@
 
 ;;;; [DROP] Vim Keys
 (use-package evil
- :ensure t
- :init
- (setq evil-want-C-u-scroll t)
- (setq evil-vsplit-window-right t)
- :config
- (evil-mode 1))
+  :ensure t
+  :init
+  (setq evil-want-C-u-scroll t)
+  (setq evil-vsplit-window-right t)
+  :config
+  (evil-mode 1))
 
 ;;; Git
 (use-package magit
