@@ -2,8 +2,9 @@
 export LANG=en_US.UTF-8
 
 # Aliases
-alias v="vim"
+alias n="nvim"
 alias t="tmux"
+alias v="vim"
 
 # PATH
 export PATH="/Users/jeon/.local/bin/:$PATH"
