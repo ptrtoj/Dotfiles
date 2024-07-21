@@ -1,4 +1,6 @@
-set nocompatible
+" Defaults changed from Vim-8.0
+"set nocompatible
+"set nrformats-=octal  " increment as decimal, even with leading 0
 
 " Enable filetype detection
 filetype on
@@ -30,6 +32,8 @@ set relativenumber
 
 set showmode
 set showcmd
+set wildmenu
+set wildmode=full
 
 set incsearch
 set hlsearch
@@ -40,7 +44,7 @@ set lazyredraw
 set splitbelow
 set splitright
 
-set cursorline
+"set cursorline
 set colorcolumn   =80
 set wrapscan
 set report        =0
