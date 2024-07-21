@@ -6,9 +6,6 @@
 
 Really trying to add only the things I 'require' but time to time, some packages were added with no specific needs.
 
-If there's no subheading, current heading has 'TODO' like tags.
-If there are subheadings, current heading will have no tags.
-
 (Semicolons matter, see: [[ https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html][D.7 Tips on Writing Comments]])
 
 1** [DONE] Follow Basic Structure
@@ -20,7 +17,7 @@ If there are subheadings, current heading will have no tags.
   ;;; Code:
 #+end_src
 
-** [DONE] Prevent ~custom.el~
+** Prevent ~custom.el~
 
 Prevent emacs from appending ~custom~ parts into this file, rather put them to ~custom.el~.
 
@@ -45,8 +42,8 @@ Prevent emacs from appending ~custom~ parts into this file, rather put them to ~
 #+end_src
 
 *** [DONE] Auto Update Packages
-#+begin_src elisp :tangle no
-  (use-package
+#+begin_src elisp
+  (use-package auto-package-update
     :ensure t
     :bind
     ("C-c u p" . package-refresh-contents)
@@ -145,11 +142,14 @@ Check parenthesis from above when you decide to use below.
 
 #+begin_src elisp
   (use-package autorevert
-    :diminish (auto-revert-mode))
+    :diminish (auto-revert-mode)
+    :config
+    (global-auto-revert-mode t))
 #+end_src
 
 ** Editing
 *** [DROP] Forward to the start of word
+
 *~forward-to-word~* doesn't work well with ~superword-mode~.
 #+begin_src elisp :tangle no
       (use-package misc
@@ -181,6 +181,14 @@ Check parenthesis from above when you decide to use below.
     :hook
     (prog-mode . electric-pair-mode)
     (org-mode . electric-pair-mode))
+#+end_src
+
+*** [DONE] Show Parenthesis
+
+#+begin_src elisp
+  (use-package paren
+  :config
+  (show-paren-mode t))
 #+end_src
 
 *** [DONE] Trim Whitespaces
@@ -229,14 +237,14 @@ but you can download compatible dictionaries from other sources, such as [[https
     (prog-mode . flyspell-prog-mode))
 #+end_src
 
-*** [DROP] Abbreviation
+*** [DONE] Abbreviation
 
-#+begin_src elisp :tangle no
+#+begin_src elisp
   (use-package abbrev
     :diminish)
 #+end_src
 
-*** [DROP] editorconfig
+*** [DROP] Editor Config
 
 (See: [[https://www.kernel.org/doc/html/latest/process/coding-style.html][Linux kernel coding style, 9) You’ve made a mess of it]], and [[https://editorconfig.org][project website]])
 
@@ -265,11 +273,9 @@ but you can download compatible dictionaries from other sources, such as [[https
     ("C-c k" . describe-personal-keybindings))
 #+end_src
 
-*** [DROP] Evil
+*** [TESTING] Evil
 
-Time to time, *evil* creates unnecessary work for me 😡
-
-#+begin_src elisp :tangle no
+#+begin_src elisp
   (use-package evil
     :ensure t
     :custom
@@ -310,7 +316,7 @@ Also, follow the symlink for the file name.
 #+end_src
 
 ** Git
-*** [DROP] Mgait
+*** [DROP] Magit
 #+begin_src elisp :tangle no
   (use-package magit
     :ensure t
@@ -319,15 +325,15 @@ Also, follow the symlink for the file name.
 #+end_src
 
 ** Programming
-*** [DROP] Eglot
-#+begin_src elisp :tangle no
+*** [TESTING] Eglot
+#+begin_src elisp
   (use-package eglot
     :hook
     (c-mode . eglot-ensure))
 #+end_src
 
-*** [DROP] Eldoc
-#+begin_src elisp :tangle no
+*** [TESTING] Eldoc
+#+begin_src elisp
   (use-package eldoc
     :diminish
     ;;hook
@@ -335,6 +341,17 @@ Also, follow the symlink for the file name.
     ;;(lisp-interaction-mode . eldoc-mode)
     ;;(ielm-mode-hook . eldoc-mode)
     )
+#+end_src
+
+*** [TESTING] Flymake
+
+#+begin_src elisp
+  (use-package flymake
+    :bind (:map flymake-mode-map
+		("M-n" . 'flymake-goto-next-error)
+		("M-p" . 'flymake-goto-prev-error))
+    :custom
+    (flymake-mode-line-lighter "F"))
 #+end_src
 
 *** [DROP] Treesitter
@@ -351,10 +368,10 @@ Also, follow the symlink for the file name.
     :after (tree-sitter))
 #+end_src
 
-*** [DROP] Yasnippet
+*** [TESTING] Yasnippet
 **** helper function
 
-#+begin_src elisp :tangle no
+#+begin_src elisp
   (defun libj/company-add-yas-backend (backends)
     "Add yas data to company.
       \\='BACKENDS\\=' argument gets old company backends list"
@@ -367,7 +384,7 @@ Also, follow the symlink for the file name.
 #+end_src
 
 **** yasnippet
-#+begin_src elisp :tangle no
+#+begin_src elisp
   (use-package yasnippet
     :ensure t
     :diminish (yas-minor-mode)
@@ -381,8 +398,8 @@ Also, follow the symlink for the file name.
     :ensure t)
 #+end_src
 
-*** [DROP] Company
-#+begin_src elisp :tangle no
+*** [TESTING] Company
+#+begin_src elisp
   (use-package company
     :ensure t
     :diminish
@@ -404,8 +421,8 @@ Also, follow the symlink for the file name.
     (company-mode . company-box-mode))
 #+end_src
 
-*** [DROP] Fix MacOS Shell Path Probelm
-#+begin_src :tangle no
+*** [TESTING] Fix MacOS Shell Path Probelm
+#+begin_src elisp
   (use-package exec-path-from-shell
     :ensure t
     :custom
@@ -414,12 +431,13 @@ Also, follow the symlink for the file name.
 #+end_src
 
 ** Language Specifics
-*** [DROP] C
-#+begin_src elisp :tangle no
-  (use-package cc-mode
-    :diminish
-    :custom
-    (c-basic-offset 4))
+*** [DONE] C
+#+begin_src elisp
+    (use-package cc-mode
+      :diminish
+      :custom
+      (c-basic-offset 4)
+      (c-default-style "k&r"))
 #+end_src
 
 ** Minibuffer
@@ -469,26 +487,33 @@ Add summarized explanation onto minibuffer list.
     (tool-bar-mode -1))
 #+end_src
 
-*** [DROP] Faces (fonts and frame)
-#+begin_src elisp :tangle no
+*** [DONE] Disable Scrollbar
+#+begin_src elisp
+  (use-package scroll-bar
+    :config
+    (scroll-bar-mode 0))
+#+end_src
+
+*** [DONE] Faces (fonts and frame)
+#+begin_src elisp
   (use-package faces
     :config
     (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
     (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-    (add-to-list 'default-frame-alist '(font . "BerkeleyMono Nerd Font"))
+    (add-to-list 'default-frame-alist '(font . "Berkeley Mono"))
     ;; Fullscreen on startup
     (add-to-list 'default-frame-alist '(fullscreen . maximized))
+    ;; Default width and height
+    ;;(add-to-list 'default-frame-alist (cons 'width 120))
+    ;;(add-to-list 'default-frame-alist (cons 'height 70)))
+
     ;; Transparency
     ;; Emacs 29 introduced below, but doesn't work on Macos.
     ;;(set-frame-parameter nil 'alpha-background 90)
     ;;(add-to-list 'default-frame-alist '(alpha-background . 90))
     ;; Rather this works (the old way).
     (set-frame-parameter (selected-frame) 'alpha '(95 95))
-    (add-to-list 'default-frame-alist '(alpha 95 95))
-    ;; Default width and height
-    ;;(add-to-list 'default-frame-alist (cons 'width 120))
-    ;;(add-to-list 'default-frame-alist (cons 'height 70)))
-    )
+    (add-to-list 'default-frame-alist '(alpha 95 95)))
 #+end_src
 
 *** [DONE] Show Line Numbers
@@ -506,15 +531,15 @@ Add summarized explanation onto minibuffer list.
     (org-mode . display-line-numbers-mode))
 #+end_src
 
-*** [DROP] Show Column Numbers
-#+begin_src elisp :tangle no
+*** [DONE] Show Column Numbers
+#+begin_src elisp
   (use-package simple
     :config
     (column-number-mode 1))
 #+end_src
 
-*** [DROP] Max Column Indicator
-#+begin_src elisp :tangle no
+*** [DONE] Max Column Indicator
+#+begin_src elisp
   (use-package display-fill-column-indicator
     :hook
     (prog-mode . display-fill-column-indicator-mode)
@@ -522,23 +547,23 @@ Add summarized explanation onto minibuffer list.
     (org-mode . display-fill-column-indicator-mode))
 #+end_src
 
-*** [DROP] Highlight Current Cursor Line
-#+begin_src elisp :tangle no
+*** [DONE] Highlight Current Cursor Line
+#+begin_src elisp
   (use-package hl-line
     :config
     (global-hl-line-mode 1))
 #+end_src
 
-*** [DROP] Show URL as a clickable link
-#+begin_src elisp :tangle no
+*** [DONE] Show URL as a clickable link
+#+begin_src elisp
   (use-package goto-addr
     :hook
     (prog-mode . goto-address-prog-mode)
     (text-mode . goto-address-prog-mode))
 #+end_src
 
-*** [DROP] Color Theme
-#+begin_src elisp :tangle no
+*** [DONE] Color Theme
+#+begin_src elisp
   (use-package catppuccin-theme
     :ensure t
     :custom
@@ -580,8 +605,8 @@ Add summarized explanation onto minibuffer list.
 #+end_src
 
 ** IRC
-*** [DROP] ERC
-#+begin_src elisp :tangle no
+*** [DONE] ERC
+#+begin_src elisp
   (use-package erc
     :custom
     (erc-nick "jeon")
