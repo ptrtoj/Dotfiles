@@ -8,15 +8,6 @@ Really trying to add only the things I 'require' but time to time, some packages
 
 (Semicolons matter, see: [[ https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html][D.7 Tips on Writing Comments]])
 
-1** [DONE] Follow Basic Structure
-#+begin_src elisp
-  ;;; init.el -*- coding: utf-8; lexical-binding: t -*-
-
-  ;;; Commentary:
-
-  ;;; Code:
-#+end_src
-
 ** Prevent ~custom.el~
 
 Prevent emacs from appending ~custom~ parts into this file, rather put them to ~custom.el~.
@@ -158,6 +149,9 @@ Check parenthesis from above when you decide to use below.
 #+end_src
 
 *** [DONE] Underscore as One Word
+
+test-field, testField, test field, test_field.
+
 #+begin_src elisp
   (use-package subword
     ;; subword enables superword-mode
@@ -183,9 +177,10 @@ Check parenthesis from above when you decide to use below.
     (org-mode . electric-pair-mode))
 #+end_src
 
-*** [DONE] Show Parenthesis
+*** [TODO] Show Parenthesis
 
-#+begin_src elisp
+Is this default(?)
+#+begin_src elisp :tangle no
   (use-package paren
   :config
   (show-paren-mode t))
@@ -204,7 +199,7 @@ Check parenthesis from above when you decide to use below.
     (before-save . whitespace-cleanup))
 #+end_src
 
-*** [DONE] Spellcheck
+*** [TESTING] Spellcheck
 
 Check spelling errors.
 
@@ -226,15 +221,15 @@ but you can download compatible dictionaries from other sources, such as [[https
 
 **** flyspell
 #+begin_src elisp
-  (use-package flyspell
-    :diminish
-    ;;:config
-    ;;(setq ispell-program-name "hunspell")
-    ;;(setq ispell-local-dictionary "en_US")
-    :hook
-    (text-mode . flyspell-mode)
-    ;; seems org-mode also works as prog-mode
-    (prog-mode . flyspell-prog-mode))
+    (use-package flyspell
+      :diminish
+      ;;:config
+      ;;(setq ispell-program-name "hunspell")
+      ;;(setq ispell-local-dictionary "en_US")
+      :hook
+      (text-mode . flyspell-mode)
+      (prog-mode . flyspell-prog-mode)
+      (org-mode . flyspell-prog-mode))
 #+end_src
 
 *** [DONE] Abbreviation
@@ -273,9 +268,9 @@ but you can download compatible dictionaries from other sources, such as [[https
     ("C-c k" . describe-personal-keybindings))
 #+end_src
 
-*** [TESTING] Evil
+*** [DROP] Evil
 
-#+begin_src elisp
+#+begin_src elisp :tangle no
   (use-package evil
     :ensure t
     :custom
@@ -354,8 +349,8 @@ Also, follow the symlink for the file name.
     (flymake-mode-line-lighter "F"))
 #+end_src
 
-*** [DROP] Treesitter
-#+begin_src elisp :tangle no
+*** [TESTING] Treesitter
+#+begin_src elisp
   (use-package tree-sitter
     :ensure t
     :init
@@ -618,9 +613,3 @@ Add summarized explanation onto minibuffer list.
     :custom
     (erc-keywords '("jeon")))
 #+end_src
-
-** [DROP] Using Outline to Fold Headlines
-
-There's also a way to organizing ~init.el~ better with ~outline mode~ and ~display mode~ with ~local vars~.
-
-Refer to my ~init.el.orig~ or see [[https://www.reddit.com/r/emacs/comments/a6tu8y/outlineminormode_for_emacs_maybe_useful][this]].
