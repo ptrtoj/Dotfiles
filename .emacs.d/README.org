@@ -8,49 +8,6 @@ Really trying to add only the things I 'require' but time to time, some packages
 
 (Semicolons matter, see: [[ https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html][D.7 Tips on Writing Comments]])
 
-** Prevent ~custom.el~
-
-Prevent emacs from appending ~custom~ parts into this file, rather put them to ~custom.el~.
-
-#+begin_src elisp
-  (setq custom-file (concat user-emacs-directory "custom.el"))
-  (when (file-exists-p custom-file)
-    (load custom-file))
-#+end_src
-
-** Packages Manager Related
-*** [DONE] Initialize Package Contents
-
-(~package-refresh-contents~ was moved to ~auto-package-update~ config section)
-
-#+begin_src elisp
-  (use-package package
-    :config
-    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-    (package-initialize)
-    (unless package-archive-contents
-      (package-refresh-contents)))
-#+end_src
-
-*** [DONE] Auto Update Packages
-#+begin_src elisp
-  (use-package auto-package-update
-    :ensure t
-    :bind
-    ("C-c u p" . package-refresh-contents)
-    ("C-c u g" . auto-package-update-now-async)
-    :custom
-    (setq auto-package-update-prompt-before-update t)
-    (setq auto-package-update-delete-old-versions t))
-#+end_src
-
-*** [DONE] Diminish - Hide Minor Modes
-
-#+begin_src elisp
-  (use-package diminish
-    :ensure t)
-#+end_src
-
 ** Editor Settings
 *** [DONE] Defaults
 #+begin_src elisp
@@ -92,6 +49,16 @@ Check parenthesis from above when you decide to use below.
   ;; mode.  Vertico commands are hidden in normal buffers. This setting is
   ;; useful beyond Vertico.
   (setq read-extended-command-predicate #'command-completion-default-include-p))
+#+end_src
+
+*** [DONE] Prevent ~custom.el~
+
+Prevent emacs from appending ~custom~ parts into this file, rather put them to ~custom.el~.
+
+#+begin_src elisp
+  (setq custom-file (concat user-emacs-directory "custom.el"))
+  (when (file-exists-p custom-file)
+    (load custom-file))
 #+end_src
 
 *** [DONE] No Backup Files
@@ -138,11 +105,44 @@ Check parenthesis from above when you decide to use below.
     (global-auto-revert-mode t))
 #+end_src
 
+** Packages Manager Related
+*** [DONE] Initialize Package Contents
+
+(~package-refresh-contents~ was moved to ~auto-package-update~ config section)
+
+#+begin_src elisp
+  (use-package package
+    :config
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+    (package-initialize)
+    (unless package-archive-contents
+      (package-refresh-contents)))
+#+end_src
+
+*** [DONE] Auto Update Packages
+#+begin_src elisp
+  (use-package auto-package-update
+    :ensure t
+    :bind
+    ("C-c u p" . package-refresh-contents)
+    ("C-c u g" . auto-package-update-now-async)
+    :custom
+    (setq auto-package-update-prompt-before-update t)
+    (setq auto-package-update-delete-old-versions t))
+#+end_src
+
+*** [DONE] Diminish - Hide Minor Modes
+
+#+begin_src elisp
+  (use-package diminish
+    :ensure t)
+#+end_src
+
 ** Editing
-*** [DROP] Forward to the start of word
+*** [TESTING] Forward to the start of word
 
 *~forward-to-word~* doesn't work well with ~superword-mode~.
-#+begin_src elisp :tangle no
+#+begin_src elisp
       (use-package misc
 	:bind
 	("M-f" . forward-to-word))
@@ -177,8 +177,7 @@ test-field, testField, test field, test_field.
     (org-mode . electric-pair-mode))
 #+end_src
 
-*** [TODO] Show Parenthesis
-
+*** [DROP] Show Parenthesis
 Is this default(?)
 #+begin_src elisp :tangle no
   (use-package paren
@@ -199,11 +198,11 @@ Is this default(?)
     (before-save . whitespace-cleanup))
 #+end_src
 
-*** [TESTING] Spellcheck
+*** [DONE] Spellcheck
 
 Check spelling errors.
 
-**** System dependency
+
 - aspell (or hunspell)
 - And also dictionary files if you chose to use hunspell
   - '*.aff' && '*.dic' (e.g. 'en_US.aff' and 'en_US.dic')
@@ -219,7 +218,6 @@ but you can download compatible dictionaries from other sources, such as [[https
   $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.dic
 #+end_src
 
-**** flyspell
 #+begin_src elisp
     (use-package flyspell
       :diminish
@@ -320,14 +318,15 @@ Also, follow the symlink for the file name.
 #+end_src
 
 ** Programming
-*** [TESTING] Eglot
+*** [DONE] Eglot
 #+begin_src elisp
   (use-package eglot
     :hook
     (c-mode . eglot-ensure))
 #+end_src
 
-*** [TESTING] Eldoc
+*** [DONE] Eldoc
+
 #+begin_src elisp
   (use-package eldoc
     :diminish
@@ -338,7 +337,18 @@ Also, follow the symlink for the file name.
     )
 #+end_src
 
-*** [TESTING] Flymake
+*** [DONE] Eldoc-box
+#+begin_src elisp
+	(use-package eldoc-box
+	  :ensure t
+	  :after eldoc
+	  :hook
+	  (eglot-managed-mode . eldoc-box-hover-at-point-mode)
+	  :config
+	  (set-face-attribute 'eldoc-box-body nil :font "Fira Sans")
+	  (set-face-attribute 'eldoc-box-border nil :background "black"))
+#+end_src
+*** [DONE] Flymake
 
 #+begin_src elisp
   (use-package flymake
@@ -349,10 +359,11 @@ Also, follow the symlink for the file name.
     (flymake-mode-line-lighter "F"))
 #+end_src
 
-*** [TESTING] Treesitter
+*** [DONE] Treesitter
 #+begin_src elisp
   (use-package tree-sitter
     :ensure t
+    :diminish
     :init
     (global-tree-sitter-mode)
     :hook
@@ -363,9 +374,9 @@ Also, follow the symlink for the file name.
     :after (tree-sitter))
 #+end_src
 
-*** [TESTING] Yasnippet
-**** helper function
+*** [DONE] Yasnippet
 
+Define helper function.
 #+begin_src elisp
   (defun libj/company-add-yas-backend (backends)
     "Add yas data to company.
@@ -378,7 +389,6 @@ Also, follow the symlink for the file name.
 	      '(:with company-yasnippet))))
 #+end_src
 
-**** yasnippet
 #+begin_src elisp
   (use-package yasnippet
     :ensure t
@@ -393,7 +403,7 @@ Also, follow the symlink for the file name.
     :ensure t)
 #+end_src
 
-*** [TESTING] Company
+*** [DONE] Company
 #+begin_src elisp
   (use-package company
     :ensure t
@@ -416,7 +426,7 @@ Also, follow the symlink for the file name.
     (company-mode . company-box-mode))
 #+end_src
 
-*** [TESTING] Fix MacOS Shell Path Probelm
+*** [DONE] Fix MacOS Shell Path Probelm
 #+begin_src elisp
   (use-package exec-path-from-shell
     :ensure t
@@ -436,22 +446,17 @@ Also, follow the symlink for the file name.
 #+end_src
 
 ** Minibuffer
-*** [DROP] Vertico
-
-Better minibuffer.
-
-#+begin_src elisp :tangle no
+*** [TESTING] Vertico
+#+begin_src elisp
   (use-package vertico
     :ensure t
     :init
     (vertico-mode))
 #+end_src
 
-*** [DROP] Orderless
+*** [TESTING] Orderless
 
-For better search results.
-
-#+begin_src elisp :tangle no
+#+begin_src elisp
   (use-package orderless
     :ensure t
     :init
@@ -460,11 +465,9 @@ For better search results.
 	  completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
-*** [DROP] Marginalia
+*** [TESTING] Marginalia
 
-Add summarized explanation onto minibuffer list.
-
-#+begin_src elisp :tangle no
+#+begin_src elisp
   (use-package marginalia
     :ensure t
     :init
@@ -538,8 +541,7 @@ Add summarized explanation onto minibuffer list.
   (use-package display-fill-column-indicator
     :hook
     (prog-mode . display-fill-column-indicator-mode)
-    (markdown-mode . display-fill-column-indicator-mode)
-    (org-mode . display-fill-column-indicator-mode))
+    (markdown-mode . display-fill-column-indicator-mode))
 #+end_src
 
 *** [DONE] Highlight Current Cursor Line
@@ -587,7 +589,7 @@ Add summarized explanation onto minibuffer list.
   ;;  (marginalia-mode . nerd-icons-completion-marginalia-setup))
 #+end_src
 
-*** [DROP] Dired Icons
+*** [DROP] Dirrmed Icons
 #+begin_src elisp :tangle no
   ;;;; [DROP] Icons for Dired
   ;; doom-modeline installs nerd-icons
