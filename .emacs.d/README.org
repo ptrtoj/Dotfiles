@@ -3,56 +3,23 @@
 #+STARTUP: show3levels
 
 * Jeon's Extreme Minimal CTRL + ALT + SHIFT
-
 Really trying to add only the things I 'require' but time to time, some packages were added with no specific needs.
 
-(Semicolons matter, see: [[ https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html][D.7 Tips on Writing Comments]])
+(BTW, Semicolons matter, see: [[ https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html][D.7 Tips on Writing Comments]])
 
 ** Editor Settings
-*** [DONE] Defaults
+*** DONE Defaults
 #+begin_src elisp
   (use-package emacs
     :custom
     (user-full-name "WooHyoung Jeon")
     (user-mail-address "jeon@ptrtoj.com")
-    ;; yes-or-no to y-or-n
     (use-short-answers t)
-    ;; do not show welcome screen
     (inhibit-startup-screen t)
-    ;; Disable audible bell, rather blink the screen
     (visible-bell t))
 #+end_src
 
-**** [TODO] Vertico Recommendations
-Check parenthesis from above when you decide to use below.
-#+begin_src elisp :tangle no
-  ;; vertico recommends below
-  :init
-  (defun crm-indicator (args)
-    (cons (format "[CRM%s] %s"
-		  (replace-regexp-in-string
-		   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-		   crm-separator)
-		  (car args))
-	  (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-
-  ;; Do not allow the cursor in the minibuffer prompt
-  (setq minibuffer-prompt-properties
-	'(read-only t cursor-intangible t face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-
-  ;; Support opening new minibuffers from inside existing minibuffers.
-  (setq enable-recursive-minibuffers t)
-
-  ;; Emacs 28 and newer: Hide commands in M-x which do not work in the current
-  ;; mode.  Vertico commands are hidden in normal buffers. This setting is
-  ;; useful beyond Vertico.
-  (setq read-extended-command-predicate #'command-completion-default-include-p))
-#+end_src
-
-*** [DONE] Prevent ~custom.el~
-
+*** DONE Prevent ~custom.el~
 Prevent emacs from appending ~custom~ parts into this file, rather put them to ~custom.el~.
 
 #+begin_src elisp
@@ -61,16 +28,16 @@ Prevent emacs from appending ~custom~ parts into this file, rather put them to ~
     (load custom-file))
 #+end_src
 
-*** [DONE] No Backup Files
+*** DROP No Backup Files
+Dropped because backup file saved my a$$.
 
-#+begin_src elisp
+#+begin_src elisp :tangle no
   (use-package files
     :custom
     (make-backup-files nil))
 #+end_src
 
-*** [DONE] Remember Recent Files
-
+*** DONE Remember Recent Files
 #+begin_src elisp
   (use-package recentf
     :bind
@@ -79,16 +46,14 @@ Prevent emacs from appending ~custom~ parts into this file, rather put them to ~
     (recentf-mode 1))
 #+end_src
 
-*** [DONE] Remember Recent Commands
-
+*** DONE Remember Recent Commands
 #+begin_src elisp
   (use-package savehist
     :config
     (savehist-mode 1))
 #+end_src
 
-*** [DONE] Remember Last Position
-
+*** DONE Remember Last Position
 #+begin_src elisp
   ;;;; Save Last Position
   (use-package saveplace
@@ -96,8 +61,7 @@ Prevent emacs from appending ~custom~ parts into this file, rather put them to ~
     (save-place-mode 1))
 #+end_src
 
-*** [DONE] Auto Revert Buffer
-
+*** DONE Auto Revert Buffer
 #+begin_src elisp
   (use-package autorevert
     :diminish (auto-revert-mode)
@@ -106,8 +70,7 @@ Prevent emacs from appending ~custom~ parts into this file, rather put them to ~
 #+end_src
 
 ** Packages Manager Related
-*** [DONE] Initialize Package Contents
-
+*** DONE Initialize Package Contents
 (~package-refresh-contents~ was moved to ~auto-package-update~ config section)
 
 #+begin_src elisp
@@ -119,7 +82,7 @@ Prevent emacs from appending ~custom~ parts into this file, rather put them to ~
       (package-refresh-contents)))
 #+end_src
 
-*** [DONE] Auto Update Packages
+*** DONE Auto Update Packages
 #+begin_src elisp
   (use-package auto-package-update
     :ensure t
@@ -131,44 +94,41 @@ Prevent emacs from appending ~custom~ parts into this file, rather put them to ~
     (setq auto-package-update-delete-old-versions t))
 #+end_src
 
-*** [DONE] Diminish - Hide Minor Modes
-
+*** DONE Diminish - Hide Minor Modes
 #+begin_src elisp
-  (use-package diminish
-    :ensure t)
+      (use-package diminish
+	:ensure t)
 #+end_src
 
 ** Editing
-*** [TESTING] Forward to the start of word
-
+*** DROP Forward to the start of word
 *~forward-to-word~* doesn't work well with ~superword-mode~.
-#+begin_src elisp
-      (use-package misc
-	:bind
-	("M-f" . forward-to-word))
+#+begin_src elisp :tangle no
+  (use-package misc
+    :bind
+    ("M-f" . forward-to-word))
 #+end_src
 
-*** [DONE] Underscore as One Word
-
+*** DONE Underscore as One Word
 test-field, testField, test field, test_field.
 
 #+begin_src elisp
   (use-package subword
     ;; subword enables superword-mode
-  :diminish (superword-mode)
-  :config
-  (global-superword-mode t))
+    :diminish (superword-mode)
+    :config
+    (global-superword-mode t))
 #+end_src
 
-*** [DONE] Delete selection as I Type
-
+*** DONE Delete selection as I Type
 #+begin_src elisp
   (use-package delsel
     :config
     (delete-selection-mode 1))
 #+end_src
 
-*** [DONE] Match Parenthesis
+*** DONE Match Parenthesis
+Doesn't automatically close the parenthesis in org-mode.
 
 #+begin_src elisp
   (use-package elec-pair
@@ -177,16 +137,15 @@ test-field, testField, test field, test_field.
     (org-mode . electric-pair-mode))
 #+end_src
 
-*** [DROP] Show Parenthesis
-Is this default(?)
+*** DROP Show Parenthesis
+Dropped because the default is 'on' already.
 #+begin_src elisp :tangle no
   (use-package paren
-  :config
-  (show-paren-mode t))
+    :config
+    (show-paren-mode t))
 #+end_src
 
-*** [DONE] Trim Whitespaces
-
+*** DONE Trim Whitespaces
 #+begin_src elisp
   (use-package whitespace
     ;; show whitespace with colors
@@ -198,14 +157,12 @@ Is this default(?)
     (before-save . whitespace-cleanup))
 #+end_src
 
-*** [DONE] Spellcheck
-
+*** DONE Spellcheck
 Check spelling errors.
-
 
 - aspell (or hunspell)
 - And also dictionary files if you chose to use hunspell
-  - '*.aff' && '*.dic' (e.g. 'en_US.aff' and 'en_US.dic')
+- '*.aff' && '*.dic' (e.g. 'en_US.aff' and 'en_US.dic')
 
 Dictionary files should be placed in ~/USER_HOME_DIR/Library/Spelling/~ or ~/Library/Spelling/~.
 
@@ -219,25 +176,25 @@ but you can download compatible dictionaries from other sources, such as [[https
 #+end_src
 
 #+begin_src elisp
-    (use-package flyspell
-      :diminish
-      ;;:config
-      ;;(setq ispell-program-name "hunspell")
-      ;;(setq ispell-local-dictionary "en_US")
-      :hook
-      (text-mode . flyspell-mode)
-      (prog-mode . flyspell-prog-mode)
-      (org-mode . flyspell-prog-mode))
+  (use-package flyspell
+    :diminish
+    ;;:config
+    ;;(setq ispell-program-name "hunspell")
+    ;;(setq ispell-local-dictionary "en_US")
+    :hook
+    (text-mode . flyspell-mode)
+    (prog-mode . flyspell-prog-mode)
+    (org-mode . flyspell-prog-mode))
 #+end_src
 
-*** [DONE] Abbreviation
-
+*** DONE Abbreviation
+Automatically on, so diminish the minor mode name from modeline.
 #+begin_src elisp
   (use-package abbrev
     :diminish)
 #+end_src
 
-*** [DROP] Editor Config
+*** DROP Editor Config
 
 (See: [[https://www.kernel.org/doc/html/latest/process/coding-style.html][Linux kernel coding style, 9) You’ve made a mess of it]], and [[https://editorconfig.org][project website]])
 
@@ -249,8 +206,7 @@ but you can download compatible dictionaries from other sources, such as [[https
 #+end_src
 
 ** Key Bindings
-*** [DONE] Which-key
-
+*** DONE Which-key
 #+begin_src elisp
   (use-package which-key
     :ensure t
@@ -259,14 +215,14 @@ but you can download compatible dictionaries from other sources, such as [[https
     (which-key-mode t))
 #+end_src
 
-*** [DONE] Bind-keys
+*** DONE Bind-keys
 #+begin_src elisp
   (use-package bind-keys
     :bind
     ("C-c k" . describe-personal-keybindings))
 #+end_src
 
-*** [DROP] Evil
+*** DROP Evil
 
 #+begin_src elisp :tangle no
   (use-package evil
@@ -280,8 +236,7 @@ but you can download compatible dictionaries from other sources, such as [[https
 #+end_src
 
 ** Org Mode
-*** [DONE] Helper Fnuction
-
+*** DONE Helper Fnuction
 Correct filename and path are important.
 Also, follow the symlink for the file name.
 
@@ -293,23 +248,23 @@ Also, follow the symlink for the file name.
 	(org-babel-tangle))))
 #+end_src
 
-*** [DONE] Org
+*** DONE Org
 #+begin_src elisp
   (use-package org
     :custom
     (org-todo-keywords
-     '((sequence "[TODO]" "[WIP]" "[TESTING]" "|" "[DONE]" "[DROP]")))
-    (org-todo-keyword-faces '(("[TODO]" . "red")
-			      ("[WIP]" . "orange")
-			      ("[TESTING]" . "blue")
-			      ("[DONE]" . "green")
-			      ("[DROP]" . "gray")))
+     '((sequence "TODO" "WIP" "TESTING" "|" "DONE" "DROP")))
+    (org-todo-keyword-faces '(("TODO" . "red")
+			      ("WIP" . "orange")
+			      ("TESTING" . "blue")
+			      ("DONE" . "green")
+			      ("DROP" . "gray")))
     :hook
     (after-save . libj/org-tangle-on-save))
 #+end_src
 
 ** Git
-*** [DROP] Magit
+*** Magit
 #+begin_src elisp :tangle no
   (use-package magit
     :ensure t
@@ -318,15 +273,14 @@ Also, follow the symlink for the file name.
 #+end_src
 
 ** Programming
-*** [DONE] Eglot
+*** DONE Eglot
 #+begin_src elisp
   (use-package eglot
     :hook
     (c-mode . eglot-ensure))
 #+end_src
 
-*** [DONE] Eldoc
-
+*** DONE Eldoc
 #+begin_src elisp
   (use-package eldoc
     :diminish
@@ -337,19 +291,21 @@ Also, follow the symlink for the file name.
     )
 #+end_src
 
-*** [DONE] Eldoc-box
-#+begin_src elisp
-	(use-package eldoc-box
-	  :ensure t
-	  :after eldoc
-	  :hook
-	  (eglot-managed-mode . eldoc-box-hover-at-point-mode)
-	  :config
-	  (set-face-attribute 'eldoc-box-body nil :font "Fira Sans")
-	  (set-face-attribute 'eldoc-box-border nil :background "black"))
-#+end_src
-*** [DONE] Flymake
+*** TODO Eldoc-box
+Can't diminish 'ELDOC_BOX' mode indicator on modeline.
 
+#+begin_src elisp
+  (use-package eldoc-box
+    :ensure t
+    :after eldoc
+    :hook
+    (eglot-managed-mode . eldoc-box-hover-at-point-mode)
+    :config
+    ;;(set-face-attribute 'eldoc-box-body nil :font "Fira Sans")
+    (set-face-attribute 'eldoc-box-border nil :background "black"))
+#+end_src
+
+*** DONE Flymake
 #+begin_src elisp
   (use-package flymake
     :bind (:map flymake-mode-map
@@ -359,7 +315,7 @@ Also, follow the symlink for the file name.
     (flymake-mode-line-lighter "F"))
 #+end_src
 
-*** [DONE] Treesitter
+*** DONE Treesitter
 #+begin_src elisp
   (use-package tree-sitter
     :ensure t
@@ -374,13 +330,12 @@ Also, follow the symlink for the file name.
     :after (tree-sitter))
 #+end_src
 
-*** [DONE] Yasnippet
-
+*** DONE Yasnippet
 Define helper function.
 #+begin_src elisp
   (defun libj/company-add-yas-backend (backends)
     "Add yas data to company.
-      \\='BACKENDS\\=' argument gets old company backends list"
+  \\='BACKENDS\\=' argument gets old company backends list"
     (if (and (listp backends) (memq 'company-yasnippet backends))
 	backends
       (append (if (consp backends)
@@ -403,7 +358,7 @@ Define helper function.
     :ensure t)
 #+end_src
 
-*** [DONE] Company
+*** DONE Company
 #+begin_src elisp
   (use-package company
     :ensure t
@@ -426,7 +381,7 @@ Define helper function.
     (company-mode . company-box-mode))
 #+end_src
 
-*** [DONE] Fix MacOS Shell Path Probelm
+*** DONE Fix MacOS Shell Path Probelm
 #+begin_src elisp
   (use-package exec-path-from-shell
     :ensure t
@@ -436,17 +391,17 @@ Define helper function.
 #+end_src
 
 ** Language Specifics
-*** [DONE] C
-#+begin_src elisp
-    (use-package cc-mode
-      :diminish
-      :custom
-      (c-basic-offset 4)
-      (c-default-style "k&r"))
+*** C
+#+begin_src elisp :tangle no
+  (use-package cc-mode
+    :diminish
+    :custom
+    (c-basic-offset 4)
+    (c-default-style "k&r"))
 #+end_src
 
 ** Minibuffer
-*** [TESTING] Vertico
+*** DONE Vertico
 #+begin_src elisp
   (use-package vertico
     :ensure t
@@ -454,8 +409,7 @@ Define helper function.
     (vertico-mode))
 #+end_src
 
-*** [TESTING] Orderless
-
+*** DONE Orderless
 #+begin_src elisp
   (use-package orderless
     :ensure t
@@ -465,8 +419,7 @@ Define helper function.
 	  completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
-*** [TESTING] Marginalia
-
+*** DONE Marginalia
 #+begin_src elisp
   (use-package marginalia
     :ensure t
@@ -474,38 +427,38 @@ Define helper function.
     (marginalia-mode))
 #+end_src
 
-*** [DROP] Consult
-*** [DROP] Embark
+*** Consult
+*** Embark
 
 ** UI
-*** [DONE] Disable Toolbar
+*** DONE Disable Toolbar
 #+begin_src elisp
   (use-package tool-bar
     :config
     (tool-bar-mode -1))
 #+end_src
 
-*** [DONE] Disable Scrollbar
+*** DONE Disable Scrollbar
 #+begin_src elisp
   (use-package scroll-bar
     :config
     (scroll-bar-mode 0))
 #+end_src
 
-*** [DONE] Faces (fonts and frame)
+*** DONE Faces (fonts and frame)
 #+begin_src elisp
   (use-package faces
     :config
     (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
     (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
     (add-to-list 'default-frame-alist '(font . "Berkeley Mono"))
-    ;; Fullscreen on startup
-    (add-to-list 'default-frame-alist '(fullscreen . maximized))
-    ;; Default width and height
-    ;;(add-to-list 'default-frame-alist (cons 'width 120))
-    ;;(add-to-list 'default-frame-alist (cons 'height 70)))
+    ;; fullscreen on startup
+    ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+    ;; or set default width and height
+    (add-to-list 'default-frame-alist (cons 'width 120))
+    (add-to-list 'default-frame-alist (cons 'height 70))
 
-    ;; Transparency
+    ;; transparency
     ;; Emacs 29 introduced below, but doesn't work on Macos.
     ;;(set-frame-parameter nil 'alpha-background 90)
     ;;(add-to-list 'default-frame-alist '(alpha-background . 90))
@@ -514,7 +467,7 @@ Define helper function.
     (add-to-list 'default-frame-alist '(alpha 95 95)))
 #+end_src
 
-*** [DONE] Show Line Numbers
+*** DONE Show Line Numbers
 #+begin_src elisp
   (use-package display-line-numbers
     :custom
@@ -529,38 +482,37 @@ Define helper function.
     (org-mode . display-line-numbers-mode))
 #+end_src
 
-*** [DONE] Show Column Numbers
-#+begin_src elisp
+*** TODO Show Column Numbers
+#+begin_src elisp :tangle no
   (use-package simple
     :config
     (column-number-mode 1))
 #+end_src
 
-*** [DONE] Max Column Indicator
+*** DONE Max Column Indicator
 #+begin_src elisp
   (use-package display-fill-column-indicator
     :hook
-    (prog-mode . display-fill-column-indicator-mode)
-    (markdown-mode . display-fill-column-indicator-mode))
+    (prog-mode . display-fill-column-indicator-mode))
 #+end_src
 
-*** [DONE] Highlight Current Cursor Line
-#+begin_src elisp
+*** DROP Highlight Current Cursor Line
+#+begin_src elisp :tangle no
   (use-package hl-line
     :config
     (global-hl-line-mode 1))
 #+end_src
 
-*** [DONE] Show URL as a clickable link
-#+begin_src elisp
+*** DROP Show URL as a clickable link
+#+begin_src elisp :tangle no
   (use-package goto-addr
     :hook
     (prog-mode . goto-address-prog-mode)
     (text-mode . goto-address-prog-mode))
 #+end_src
 
-*** [DONE] Color Theme
-#+begin_src elisp
+*** DROP Color Theme
+#+begin_src elisp :tangle no
   (use-package catppuccin-theme
     :ensure t
     :custom
@@ -569,7 +521,7 @@ Define helper function.
     (load-theme 'catppuccin t))
 #+end_src
 
-*** [DROP] Modeline
+*** DROP Modeline
 #+begin_src elisp :tangle no
   ;; run: M-x nerd-icons-install-fonts
   ;;(use-package doom-modeline
@@ -577,7 +529,7 @@ Define helper function.
   ;;  :init (doom-modeline-mode 1))
 #+end_src
 
-*** [DROP] Icons for Mini Buffer
+*** DROP Icons for Mini Buffer
 #+begin_src elisp :tangle no
   ;; doom-modeline installs nerd-icons
   ;;(use-package nerd-icons-completion
@@ -589,9 +541,9 @@ Define helper function.
   ;;  (marginalia-mode . nerd-icons-completion-marginalia-setup))
 #+end_src
 
-*** [DROP] Dirrmed Icons
+*** DROP Dired Icons
 #+begin_src elisp :tangle no
-  ;;;; [DROP] Icons for Dired
+  ;;;;  Icons for Dired
   ;; doom-modeline installs nerd-icons
   ;;(use-package nerd-icons-dired
   ;;  :ensure t
@@ -602,8 +554,8 @@ Define helper function.
 #+end_src
 
 ** IRC
-*** [DONE] ERC
-#+begin_src elisp
+*** TODO ERC
+#+begin_src elisp :tangle no
   (use-package erc
     :custom
     (erc-nick "jeon")
