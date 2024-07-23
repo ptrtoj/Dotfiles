@@ -14,14 +14,6 @@ set softtabstop   =4
 set shiftwidth    =4
 set shiftround
 
-" Custom shift width
-" - Makefiles
-autocmd FileType make set noexpandtab shiftwidth=8 softtabstop=0
-" - Web
-autocmd FileType html,xhtml,css,xml,xslt set shiftwidth=2 softtabstop=2
-" - Vim, Lua
-autocmd FileType vim,lua set shiftwidth=2 softtabstop=2 
-
 set backspace     =indent,eol,start
 set hidden
 set laststatus    =2
@@ -36,15 +28,15 @@ set wildmenu
 set wildmode=full
 
 set incsearch
-set hlsearch
+set hlsearch    " ':noh' to turn off highlight
 
-set ttyfast
-set lazyredraw
+"set ttyfast    " Default on
+set lazyredraw  " Default off
 
 set splitbelow
 set splitright
 
-"set cursorline
+set cursorline
 set colorcolumn   =80
 set wrapscan
 set report        =0
@@ -67,8 +59,12 @@ set nobackup
 "set undodir     =$HOME/.vim/files/undo/
 "set viminfo     ='100,n$HOME/.vim/files/info/viminfo
 
-"colorscheme  zellner
+" Auto Commands
+" Custom shift width & Auto insert comment character
+autocmd FileType c set omnifunc=ccomplete#Complete formatoptions+=ro
+autocmd FileType cpp set formatoptions+=ro
+autocmd FileType make set noexpandtab shiftwidth=8 softtabstop=0
+autocmd FileType html,xhtml,css,xml,xslt set shiftwidth=2 softtabstop=2
+autocmd FileType vim,lua set shiftwidth=2 softtabstop=2 
 
-" Auto insert comment character
-autocmd FileType c,cpp set formatoptions+=ro
-autocmd FileType c set omnifunc=ccomplete#Complete
+"colorscheme  zellner
