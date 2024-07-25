@@ -2,6 +2,8 @@
 .DS_Store
 
 # Emacs
+*~
+\#*\#
 .cache/
 .last-package-update-day
 .lsp-session-v1
