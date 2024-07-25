@@ -511,12 +511,10 @@ Define helper function.
     (text-mode . goto-address-prog-mode))
 #+end_src
 
-*** DROP Color Theme
-#+begin_src elisp :tangle no
+*** DONE Color Theme
+#+begin_src elisp
   (use-package catppuccin-theme
     :ensure t
-    :custom
-    (catppuccin-flavor 'latte)
     :config
     (load-theme 'catppuccin t))
 #+end_src
