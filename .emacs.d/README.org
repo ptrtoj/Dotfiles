@@ -139,6 +139,7 @@ Doesn't automatically close the parenthesis in org-mode.
 
 *** DROP Show Parenthesis
 Dropped because the default is 'on' already.
+
 #+begin_src elisp :tangle no
   (use-package paren
     :config
@@ -183,8 +184,8 @@ but you can download compatible dictionaries from other sources, such as [[https
     ;;(setq ispell-local-dictionary "en_US")
     :hook
     (text-mode . flyspell-mode)
-    (prog-mode . flyspell-prog-mode)
-    (org-mode . flyspell-prog-mode))
+    (prog-mode . flyspell-prog-mode))
+    ;;(org-mode . flyspell-prog-mode))
 #+end_src
 
 *** DONE Abbreviation
@@ -195,7 +196,6 @@ Automatically on, so diminish the minor mode name from modeline.
 #+end_src
 
 *** DROP Editor Config
-
 (See: [[https://www.kernel.org/doc/html/latest/process/coding-style.html][Linux kernel coding style, 9) You’ve made a mess of it]], and [[https://editorconfig.org][project website]])
 
 #+begin_src elisp :tangle no
@@ -222,15 +222,16 @@ Automatically on, so diminish the minor mode name from modeline.
     ("C-c k" . describe-personal-keybindings))
 #+end_src
 
-*** DROP Evil
-
-#+begin_src elisp :tangle no
+*** DONE Evil
+#+begin_src elisp
   (use-package evil
     :ensure t
     :custom
     (evil-want-C-u-scroll t)
     (evil-vsplit-window-right t)
     (evil-want-C-i-jump nil)
+    (evil-split-window-below t)
+    (evil-vsplit-window-right t)
     :config
     (evil-mode 1))
 #+end_src
@@ -264,7 +265,7 @@ Also, follow the symlink for the file name.
 #+end_src
 
 ** Git
-*** Magit
+*** DROP Magit
 #+begin_src elisp :tangle no
   (use-package magit
     :ensure t
@@ -302,7 +303,7 @@ Can't diminish 'ELDOC_BOX' mode indicator on modeline.
     (eglot-managed-mode . eldoc-box-hover-at-point-mode)
     :config
     ;;(set-face-attribute 'eldoc-box-body nil :font "Fira Sans")
-    (set-face-attribute 'eldoc-box-border nil :background "black"))
+    (set-face-attribute 'eldoc-box-border nil :background "white"))
 #+end_src
 
 *** DONE Flymake
@@ -332,6 +333,7 @@ Can't diminish 'ELDOC_BOX' mode indicator on modeline.
 
 *** DONE Yasnippet
 Define helper function.
+
 #+begin_src elisp
   (defun libj/company-add-yas-backend (backends)
     "Add yas data to company.
@@ -431,21 +433,23 @@ Define helper function.
 *** Embark
 
 ** UI
-*** DONE Disable Toolbar
+*** DONE Disable Tool Bar
 #+begin_src elisp
   (use-package tool-bar
     :config
     (tool-bar-mode -1))
 #+end_src
 
-*** DONE Disable Scrollbar
+*** DONE Disable Scroll Bar
 #+begin_src elisp
   (use-package scroll-bar
     :config
     (scroll-bar-mode 0))
 #+end_src
 
-*** DONE Faces (fonts and frame)
+*** TODO Faces (fonts and frame)
+TODO: 'BLUR' transparency
+
 #+begin_src elisp
   (use-package faces
     :config
@@ -465,6 +469,9 @@ Define helper function.
     ;; Rather this works (the old way).
     (set-frame-parameter (selected-frame) 'alpha '(95 95))
     (add-to-list 'default-frame-alist '(alpha 95 95)))
+    ;; [DO NOT WORK] Blur the background
+    ;;(set-face-background 'default "mac:windowBackgroundColor")
+    ;;(set-face-stipple 'default "alpha:30%"))
 #+end_src
 
 *** DONE Show Line Numbers
@@ -517,6 +524,38 @@ Define helper function.
     :ensure t
     :config
     (load-theme 'catppuccin t))
+#+end_src
+
+*** DONE Ligature
+[[https://github.com/mickeynp/ligature.el][[Github]]]
+
+#+begin_src elisp
+    ;; This assumes you've installed the package via MELPA.
+  (use-package ligature
+    :ensure t
+    :config
+    ;; Enable the "www" ligature in every possible major mode
+    (ligature-set-ligatures 't '("www"))
+    ;; Enable traditional ligature support in eww-mode, if the
+    ;; `variable-pitch' face supports it
+    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+    ;; Enable all Cascadia Code ligatures in programming modes
+    (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+					 ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+					 "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+					 "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+					 "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+					 "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+					 "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+					 "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+					 ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+					 "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+					 "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+					 "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+					 "\\\\" "://"))
+    ;; Enables ligature checks globally in all buffers. You can also do it
+    ;; per mode with `ligature-mode'.
+    (global-ligature-mode t))
 #+end_src
 
 *** DROP Modeline
