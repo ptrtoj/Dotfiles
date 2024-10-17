@@ -36,7 +36,7 @@ set lazyredraw                      " Default: off
 set splitbelow
 set splitright
 
-set cursorline
+"set cursorline
 set colorcolumn     =80
 set wrapscan
 set report          =0
@@ -60,9 +60,9 @@ set nobackup
 "set undodir     =$HOME/.vim/files/undo/
 "set viminfo     ='100,n$HOME/.vim/files/info/viminfo
 
-autocmd FileType c set omnifunc=ccomplete#Complete formatoptions+=ro
-autocmd FileType cpp set formatoptions+=ro
-autocmd FileType make set noexpandtab shiftwidth=8 softtabstop=0
-autocmd FileType html,xhtml,css,xml,xslt set shiftwidth=2 softtabstop=2
-autocmd FileType lua set shiftwidth=2 softtabstop=2 
-autocmd FileType vim set shiftwidth=4 softtabstop=4 
+"autocmd FileType c set omnifunc=ccomplete#Complete formatoptions+=ro
+"autocmd FileType cpp set formatoptions+=ro
+"autocmd FileType make set noexpandtab shiftwidth=8 softtabstop=0
+"autocmd FileType html,xhtml,css,xml,xslt set shiftwidth=2 softtabstop=2
+"autocmd FileType lua set shiftwidth=2 softtabstop=2 
+"autocmd FileType vim set shiftwidth=4 softtabstop=4 

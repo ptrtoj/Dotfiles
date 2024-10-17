@@ -520,10 +520,13 @@ TODO: 'BLUR' transparency
 
 *** DONE Color Theme
 #+begin_src elisp
-  (use-package catppuccin-theme
-    :ensure t
-    :config
-    (load-theme 'catppuccin t))
+    (use-package catppuccin-theme
+      :ensure t
+      :config
+      (load-theme 'catppuccin t)
+      :custom
+      (setq catppuccin-flavor 'latte)
+      (catppuccin-reload))
 #+end_src
 
 *** DONE Ligature
