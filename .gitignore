@@ -3,19 +3,19 @@
 
 # Emacs
 *~
-\#*\#
-.cache/
-.last-package-update-day
-.lsp-session-v1
-auto-save-list/
-custom.el
-elpa/
-history
-init.el
-places
-recentf
-transient/
-tree-sitter/
+#\#*\#
+#.cache/
+#.last-package-update-day
+#.lsp-session-v1
+#auto-save-list/
+#custom.el
+#elpa/
+#history
+#init.el
+#places
+#recentf
+#transient/
+#tree-sitter/
 
 # Neovim
 lazy-lock.json
