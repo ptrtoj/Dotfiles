@@ -1,6 +1,3 @@
-;;BTW, Semicolons matter, see: [[ https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html][D.7 Tips on Writing Comments]])
-
-
 (use-package emacs
   :custom
   (user-full-name "WooHyoung Jeon")
@@ -77,7 +74,7 @@
   ;;(prog-mode . whitespace-mode)
   (before-save . whitespace-cleanup))
 
-;;; Check spelling errors.
+;; Check spell errors.
 
 ;; - aspell (or hunspell)
 ;; - And also dictionary files if you chose to use hunspell
@@ -92,18 +89,18 @@
 ;;   $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.aff
 ;;   $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.dic
 
-;; (use-package flyspell
-;;   :diminish
-;;   ;;:config
-;;   ;;(setq ispell-program-name "hunspell")
-;;   ;;(setq ispell-local-dictionary "en_US")
-;;   :hook
-;;   (text-mode . flyspell-mode)
-;;   (prog-mode . flyspell-prog-mode))
-;;   ;;(org-mode . flyspell-prog-mode))
+(use-package flyspell
+  :diminish
+  ;;:config
+  ;;(setq ispell-program-name "hunspell")
+  ;;(setq ispell-local-dictionary "en_US")
+  :hook
+  (text-mode . flyspell-mode)
+  (prog-mode . flyspell-prog-mode))
+  ;;(org-mode . flyspell-prog-mode))
 
-;; (use-package abbrev
-;;   :diminish)
+(use-package abbrev
+  :diminish)
 
 (use-package which-key
   :ensure t
@@ -128,128 +125,111 @@
 ;;   (evil-mode 1))
 
 ;; OrgMode
-;; (defun libj/org-tangle-on-save ()
-;;   (when (string-equal (buffer-file-name)
-;;		      (expand-file-name "~/Git/Dotfiles/.emacs.d/README.org"))
-;;     (let ((org-confirm-babel-evaluate nil))
-;;       (org-babel-tangle))))
+(defun libj/org-tangle-on-save ()
+  (when (string-equal (buffer-file-name)
+		      (expand-file-name "~/Git/Dotfiles/.emacs.d/README.org"))
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle))))
 
-;; (use-package org
-;;   :custom
-;;   (org-todo-keywords
-;;    '((sequence "TODO" "WIP" "TESTING" "|" "DONE" "DROP")))
-;;   (org-todo-keyword-faces '(("TODO" . "red")
-;;			    ("WIP" . "orange")
-;;			    ("TESTING" . "blue")
-;;			    ("DONE" . "green")
-;;			    ("DROP" . "gray")))
-;;   :hook
-;;   (after-save . libj/org-tangle-on-save))
+(use-package org
+  :custom
+  (org-todo-keywords
+   '((sequence "TODO" "WIP" "TESTING" "|" "DONE" "DROP")))
+  (org-todo-keyword-faces '(("TODO" . "red")
+			    ("WIP" . "orange")
+			    ("TESTING" . "blue")
+			    ("DONE" . "green")
+			    ("DROP" . "gray")))
+  :hook
+  (after-save . libj/org-tangle-on-save))
 
-;; (use-package eglot
-;;   :hook
-;;   (c-mode . eglot-ensure))
+(use-package eglot
+  :hook
+  (c-mode . eglot-ensure))
 
-;; (use-package eldoc
-;;   :diminish
-;;   ;;hook
-;;   ;;(emacs-lisp-mode . eldoc-mode)
-;;   ;;(lisp-interaction-mode . eldoc-mode)
-;;   ;;(ielm-mode-hook . eldoc-mode)
-;;   )
+(use-package eldoc
+  :diminish
+  :hook
+  (emacs-lisp-mode . eldoc-mode)
+  (lisp-interaction-mode . eldoc-mode))
 
-;; (use-package eldoc-box
-;;   :ensure t
-;;   :after eldoc
-;;   :hook
-;;   (eglot-managed-mode . eldoc-box-hover-at-point-mode)
-;;   :config
-;;   ;;(set-face-attribute 'eldoc-box-body nil :font "Fira Sans")
-;;   (set-face-attribute 'eldoc-box-border nil :background "white"))
+  ;;(ielm-mode-hook . eldoc-mode))
 
-;; (use-package flymake
-;;   :bind (:map flymake-mode-map
-;;	      ("M-n" . 'flymake-goto-next-error)
-;;	      ("M-p" . 'flymake-goto-prev-error))
-;;   :custom
-;;   (flymake-mode-line-lighter "F"))
+(use-package eldoc-box
+  :ensure t
+  :after eldoc
+  :hook
+  (eglot-managed-mode . eldoc-box-hover-at-point-mode)
+  :config
+  ;;(set-face-attribute 'eldoc-box-body nil :font "Fira Sans")
+  (set-face-attribute 'eldoc-box-border nil :background "white"))
 
-;; (use-package tree-sitter
-;;   :ensure t
-;;   :diminish
-;;   :init
-;;   (global-tree-sitter-mode)
-;;   :hook
-;;   (tree-sitter-after-on . tree-sitter-hl-mode))
+(use-package flymake
+  :bind (:map flymake-mode-map
+	      ("M-n" . 'flymake-goto-next-error)
+	      ("M-p" . 'flymake-goto-prev-error))
+  :custom
+  (flymake-mode-line-lighter "F"))
 
-;; (use-package tree-sitter-langs
-;;   :ensure t
-;;   :after (tree-sitter))
+(use-package tree-sitter
+  :ensure t
+  :diminish
+  :init
+  (global-tree-sitter-mode)
+  :hook
+  (tree-sitter-after-on . tree-sitter-hl-mode))
 
-;; (defun libj/company-add-yas-backend (backends)
-;;   "Add yas data to company.
-;; \\='BACKENDS\\=' argument gets old company backends list"
-;;   (if (and (listp backends) (memq 'company-yasnippet backends))
-;;       backends
-;;     (append (if (consp backends)
-;;		backends
-;;	      (list backends))
-;;	    '(:with company-yasnippet))))
+(use-package tree-sitter-langs
+  :ensure t
+  :after (tree-sitter))
 
-;; (use-package yasnippet
-;;   :ensure t
-;;   :diminish (yas-minor-mode)
-;;   :config
-;;   (yas-reload-all)
-;;   :hook
-;;   (prog-mode . yas-minor-mode))
+(defun libj/company-add-yas-backend (backends)
+  "Add yas data to company.
+\\='BACKENDS\\=' argument gets old company backends list"
+  (if (and (listp backends) (memq 'company-yasnippet backends))
+      backends
+    (append (if (consp backends)
+		backends
+	      (list backends))
+	    '(:with company-yasnippet))))
 
-;; ;; actual snippets
-;; (use-package yasnippet-snippets
-;;   :ensure t)
+(use-package yasnippet
+  :ensure t
+  :diminish (yas-minor-mode)
+  :config
+  (yas-reload-all)
+  :hook
+  (prog-mode . yas-minor-mode))
 
-;; (use-package company
-;;   :ensure t
-;;   :diminish
-;;   :custom
-;;   (company-minimum-prefix-length 1)
-;;   (company-idle-delay 0.0)
-;;   :bind
-;;   (:map company-active-map
-;;	("M-/" . company-complete))
-;;   :init
-;;   (global-company-mode)
-;;   :config
-;;   (setq company-backends (mapcar #'libj/company-add-yas-backend company-backends)))
+;; actual snippets
+(use-package yasnippet-snippets
+  :ensure t)
 
-;; (use-package company-box
-;;   :ensure t
-;;   :diminish
-;;   :hook
-;;   (company-mode . company-box-mode))
+(use-package company
+  :ensure t
+  :diminish
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0)
+  :bind
+  (:map company-active-map
+	("M-/" . company-complete))
+  :init
+  (global-company-mode)
+  :config
+  (setq company-backends (mapcar #'libj/company-add-yas-backend company-backends)))
+
+(use-package company-box
+  :ensure t
+  :diminish
+  :hook
+  (company-mode . company-box-mode))
 
 (use-package exec-path-from-shell
   :ensure t
   :custom
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
-
-;; (use-package vertico
-;;   :ensure t
-;;   :init
-;;   (vertico-mode))
-
-;; (use-package orderless
-;;   :ensure t
-;;   :init
-;;   (setq completion-styles '(orderless basic)
-;;	completion-category-defaults nil
-;;	completion-category-overrides '((file (styles partial-completion)))))
-
-;; (use-package marginalia
-;;   :ensure t
-;;   :init
-;;   (marginalia-mode))
 
 (use-package tool-bar
   :config
@@ -304,29 +284,29 @@
   (setq catppuccin-flavor 'latte)
   (catppuccin-reload))
 
-;; ;; This assumes you've installed the package via MELPA.
-;; (use-package ligature
-;;   :ensure t
-;;   :config
-;;   ;; Enable the "www" ligature in every possible major mode
-;;   (ligature-set-ligatures 't '("www"))
-;;   ;; Enable traditional ligature support in eww-mode, if the
-;;   ;; `variable-pitch' face supports it
-;;   (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-;;   ;; Enable all Cascadia Code ligatures in programming modes
-;;   (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-;;				       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-;;				       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-;;				       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-;;				       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-;;				       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-;;				       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-;;				       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-;;				       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-;;				       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-;;				       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-;;				       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-;;				       "\\\\" "://"))
-;;   ;; Enables ligature checks globally in all buffers. You can also do it
-;;   ;; per mode with `ligature-mode'.
-;;   (global-ligature-mode t))
+;; This assumes you've installed the package via MELPA.
+(use-package ligature
+  :ensure t
+  :config
+  ;; Enable the "www" ligature in every possible major mode
+  (ligature-set-ligatures 't '("www"))
+  ;; Enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  ;; Enable all Cascadia Code ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+				       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+				       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+				       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+				       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+				       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+				       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+				       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+				       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+				       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+				       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+				       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+				       "\\\\" "://"))
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t))
