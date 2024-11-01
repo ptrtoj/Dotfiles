@@ -1,5 +1,2 @@
 # MacOS
 .DS_Store
-
-# Neovim
-lazy-lock.json
