@@ -4,15 +4,16 @@
 # Emacs
 *~
 #\#*\#
+*.bak
 #.cache/
 #.last-package-update-day
 #.lsp-session-v1
 #auto-save-list/
-#custom.el
-#elpa/
-#history
+custom.el
+elpa/
+history
 #init.el
-#places
+places
 #recentf
 #transient/
 #tree-sitter/
