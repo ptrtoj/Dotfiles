@@ -1,2 +1,11 @@
 # MacOS
 .DS_Store
+
+# Emacs
+elpa/
+eshell/
+transient/
+*~
+custom.el
+history
+places
