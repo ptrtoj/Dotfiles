@@ -129,8 +129,8 @@
   ;; fullscreen on startup
   ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
   ;; or set default width and height
-  (add-to-list 'default-frame-alist (cons 'width 120))
-  (add-to-list 'default-frame-alist (cons 'height 70))
+  ;;(add-to-list 'default-frame-alist (cons 'width 120))
+  ;;(add-to-list 'default-frame-alist (cons 'height 70))
 
   ;; transparency
   ;; Emacs 29 introduced below, but doesn't work on Macos.
