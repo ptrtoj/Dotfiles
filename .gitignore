@@ -9,3 +9,9 @@ transient/
 custom.el
 history
 places
+
+# Neovim
+lazy-lock.json
+
+# VSCode
+.vscode
