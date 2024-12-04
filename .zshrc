@@ -11,3 +11,12 @@ export LANG=en_US.UTF-8
 
 # Aliases
 alias v="vim"
+
+# Prompt
+# after doing '$npm install -g typewritten',
+# below is auto inserted.
+# ('$brew install typewritten' might also work,
+# but currently, doesn't work for my machine :/)
+fpath=($fpath "/Users/jeon/.zfunctions")
+autoload -U promptinit; promptinit
+prompt typewritten
