@@ -10,6 +10,7 @@ export GPG_TTY=$(tty)
 export LANG=en_US.UTF-8
 
 # Aliases
+alias n="neovim"
 alias v="vim"
 
 # Prompt
