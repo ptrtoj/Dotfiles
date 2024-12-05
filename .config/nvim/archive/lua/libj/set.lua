@@ -30,6 +30,7 @@ vim.termguicolors = true
 
 vim.opt.spell = true
 
+-- netrw section
 vim.g.netrw_keepdir = 0
 vim.g.netrw_winsize = 25
 vim.g.netrw_banner = 0
