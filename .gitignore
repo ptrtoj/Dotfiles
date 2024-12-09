@@ -6,6 +6,7 @@ elpa/
 eshell/
 transient/
 *~
+.cache
 custom.el
 history
 places
