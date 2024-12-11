@@ -21,3 +21,8 @@ alias v="vim"
 fpath=($fpath "/Users/jeon/.zfunctions")
 autoload -U promptinit; promptinit
 prompt typewritten
+
+# Remove '%' sign when new temrinal opens
+setopt PROMPT_CR
+setopt PROMPT_SP
+export PROMPT_EOL_MARK=""
