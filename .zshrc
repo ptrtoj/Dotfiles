@@ -10,20 +10,4 @@ export GPG_TTY=$(tty)
 export LANG=en_US.UTF-8
 
 # Aliases
-alias n="nvim"
 alias v="vim"
-
-# Prompt
-# after doing '$npm install -g typewritten',
-# below is auto inserted.
-# ('$brew install typewritten' might also work,
-# but currently, doesn't work for my machine :/)
-fpath=($fpath "/Users/jeon/.zfunctions")
-autoload -U promptinit; promptinit
-prompt typewritten
-
-# Remove '%' sign when new temrinal opens
-setopt PROMPT_CR
-setopt PROMPT_SP
-export PROMPT_EOL_MARK=""
-fpath=($fpath "/Users/jeon/.zfunctions")
