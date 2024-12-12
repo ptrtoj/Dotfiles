@@ -26,3 +26,4 @@ prompt typewritten
 setopt PROMPT_CR
 setopt PROMPT_SP
 export PROMPT_EOL_MARK=""
+fpath=($fpath "/Users/jeon/.zfunctions")
