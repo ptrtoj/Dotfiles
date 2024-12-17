@@ -35,12 +35,29 @@
 (use-package diminish
   :ensure t)
 
+;;; Eglot
+(use-package eglot
+  :hook
+  (prog-mode . eglot-ensure))
+
+;;; Flymake
+(use-package flymake
+  :bind (:map flymake-mode-map
+	      ("M-n" . 'flymake-goto-next-error)
+	      ("M-p" . 'flymake-goto-prev-error)))
+
 ;;; Fix MacOS Shell Path Problem
 (use-package exec-path-from-shell
   :ensure t
   :custom
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
+
+;;; Editor Config
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
 
 ;;; Which-key
 (use-package which-key
@@ -49,11 +66,39 @@
   :config
   (which-key-mode t))
 
+;;; Company
+(use-package company
+  :ensure t
+  :config
+  (setq company-tooltip-align-annotations t)
+  :hook
+  (after-init . global-company-mode))
+
 ;;; Magit
 (use-package magit
   :ensure t
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+;;; Vertico
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode))
+
+;;; Orderless
+(use-package orderless
+  :ensure t
+  :custom
+  (completion--styles '(oderless basic))
+  (completion-category-defaults nil)
+  (completion--category-overrides '((file (styles partial-completion)))))
+
+;;; Marginalia
+(use-package marginalia
+  :ensure t
+  :init
+  (marginalia-mode))
 
 ;;; Prevent Emacs Generating 'custom.el'
 (use-package cus-edit
@@ -62,18 +107,23 @@
   (when (file-exists-p custom-file)
     (load custom-file)))
 
-;;; [X] Prevent Emacs Generating Backup Files
-;; (use-package files
-;;   :custom
-;;   (make-backup-files nil))
+;;; Files
+(use-package files
+  :config
+  (setq safe-local-variable-values
+  '((eval outline-hide-body)
+   (outline-minor-mode-cycle . t)))
+  :custom
+  ;; Prevent Emacs Generating Backup
+  (make-backup-files nil))
 
-;;; [X] Remember Recent Files
-;; 'C-x C-r' was 'find-file-read-only'
-;; (use-package recentf
-;;   :bind
-;;   ("C-x C-r" . recentf-open-files)
-;;   :config
-;;   (recentf-mode 1))
+;;; Recent Files
+(use-package recentf
+  ;; 'C-x C-r' was 'find-file-read-only'
+  ;; :bind
+  ;; ("C-x C-r" . recentf-open-files)
+  :config
+  (recentf-mode 1))
 
 ;;; Remember Recent Command History
 (use-package savehist
@@ -150,9 +200,11 @@
   :config
   (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
   ;;(set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-  (add-to-list 'default-frame-alist '(font . "Berkeley Mono"))
+  (add-to-list 'default-frame-alist '(font . "BerkeleyMono Nerd Font"))
+
   ;; fullscreen on startup
   ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
   ;; or set default width and height
   ;;(add-to-list 'default-frame-alist (cons 'width 120))
   ;;(add-to-list 'default-frame-alist (cons 'height 70))
@@ -213,6 +265,21 @@
   (prog-mode . goto-address-prog-mode)
   (text-mode . goto-address-prog-mode))
 
+;;; Treesitter
+(use-package tree-sitter
+  :ensure t
+  :config
+  (global-tree-sitter-mode t))
+
+(use-package tree-sitter-langs
+  :ensure t)
+
+;;; Window Movement - Ace Window
+(use-package ace-window
+  :ensure t
+  :bind
+  ("M-o" . ace-window))
+
 ;;; Color Theme
 (use-package catppuccin-theme
   :ensure t
@@ -220,6 +287,56 @@
   (load-theme 'catppuccin t)
   (setq catppuccin-flavor 'latte)
   (catppuccin-reload))
+
+;;; Treemacs
+(use-package treemacs
+  :ensure t
+  :defer t
+  :bind
+  ("C-x t T" . treemacs-select-directory)
+  :config
+  (treemacs-fringe-indicator-mode 'always)
+  (when treemacs-python-executable
+    (treemacs-git-commit-diff-mode t))
+
+  (pcase (cons (not (null (executable-find "git")))
+	       (not (null treemacs-python-executable)))
+	       (`(t . t)
+		(treemacs-git-mode 'deferred))
+	       (`(t . _)
+		(treemacs-git-mode 'simple))))
+
+;;; Nerd Icons
+(use-package nerd-icons
+  :ensure t
+  :custom
+  (nerd-icons-font-family "BerkeleyMono Nerd Font"))
+
+(use-package nerd-icons-completion
+  :ensure t
+  :after marginalia
+  :config
+  (nerd-icons-completion-mode)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+(use-package nerd-icons-dired
+  :ensure t
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
+(use-package treemacs-nerd-icons
+  :ensure t
+  :config
+  (treemacs-load-theme "nerd-icons"))
+
+;;; Dashboard
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook)
+  (setq dashboard-items '((recents . 20)))
+  (setq dashboard-display-icons-p t)
+  (setq dashboard-icon-type 'nerd-icons))
 
 ;; Local Variables:
 ;; outline-minor-mode-cycle: t

@@ -10,6 +10,7 @@ transient/
 custom.el
 history
 places
+recentf
 
 # Neovim
 lazy-lock.json
