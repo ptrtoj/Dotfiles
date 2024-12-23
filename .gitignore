@@ -9,11 +9,9 @@ transient/
 .cache
 custom.el
 history
+init.el
 places
 recentf
 
 # Neovim
 lazy-lock.json
-
-# VSCode
-.vscode
