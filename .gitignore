@@ -2,15 +2,9 @@
 .DS_Store
 
 # Emacs
-elpa/
-eshell/
-transient/
-*~
-.cache
-custom.el
-history
-places
-recentf
+.emacs.d/*
+!.emacs.d/init.el
+!.emacs.d/README.org
 
 # Neovim
 lazy-lock.json
