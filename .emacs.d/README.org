@@ -2,65 +2,86 @@
 #+author: WooHyoung Jeon
 #+email: jeon@ptrtoj.com
 #+options: toc:nil num:nil
-
+#+startup: show3levels
 * Jeon's Extremely Minimal ALT + CTRL + SHIFT
+Saw [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuration.org][this]] and had to do this.
 
-Saw [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuration.org][this]] And had to do this.
+** Notes
+*** Dependencies
+Basically, ~use-package-ensure-system-package~ should handle this,
+but always check if the dependencies are correctly installed or not.
 
+1. for ~flyspell~
+   - ~aspell~ (or hunspell)
+   - And dictionary files, such as ~.aff~ && ~.dic~ (e.g. ~en_US.aff~ and ~en_US.dic~)
+
+Dictionary files should be placed in ~/USER_HOME_DIR/Library/Spelling/~ or ~/Library/Spelling/~.
+
+However, ~homebrew~ itself doesn't provide dictionaries for spell-checkers,
+but you can download compatible dictionaries from other sources, such as [[https://cgit.freedesktop.org/libreoffice/dictionaries/tree/][this]].
+
+#+begin_src zsh :tangle no
+  $ cd ~/Library/Spelling/
+  $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.aff
+  $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.dic
+#+end_src
+
+*** Useful Links
+**** Configurations
+1. Thomas Ingram's 'My Emacs Config': https://taingram.org/init.html
+2. Purcell's 'A reasonable Emacs config': https://github.com/purcell/emacs.d
+
+**** Link description as ~See:~
+See this [[https://ell.stackexchange.com/q/124607][Stack Exchange]] question.
+
+*** TODO
+1. [ ] Install ~markdown-mode~
+   1) [ ] Check whether ~prog-mode~ include ~markdown-mode~ or not
+
+** Prepare Emacs Itself
+*** Emacs
 #+begin_src emacs-lisp
-  ;;; init.el --- for Emacs -*- lexical-binding: t -*-
-
-  ;;; Commentary:
-
-  ;; Jeon's Personal & Minimal Emacs Config
-
-  ;; TODO:
-  ;; - Decide to include or not, if yes, then where
-  ;;   - Encoding: UTF-8
-  ;;   - no-byte-compile: t
-  ;; - Install 'markdown-mode'
-  ;;   - check whether 'prog-mode' include 'markdown-mode'
-
-  ;; Useful Links:
-  ;; - Thomas Ingram's 'My Emacs Config': https://taingram.org/init.html
-  ;; - Purcell's 'A reasonable Emacs config': https://github.com/purcell/emacs.d
-
-  ;; BTW, linking with 'See:'
-  ;; See: https://ell.stackexchange.com/q/124607
-
-  ;;; Code:
-  ;;; Prepare Emacs
   (use-package emacs
     :custom
     (user-full-name "WooHyoung Jeon")
-    (user-mail-address "jeon@ptrtoj.com")		; from 'startup.el'
+    (user-mail-address "jeon@ptrtoj.com")	; from 'startup.el'
     (inhibit-startup-screen 1)			; from 'startup.el'
-    (use-short-answers 1)				; 'help' page recommends not setting this to 't'
-    (visible-bell 1)
-    (use-package-enable-imenu-support 1)
-    ;; check 'describe-personal-keybindings' time to time.
-    ;; it shows, 'was `this function`' commentary.
+    (use-short-answers 1)			; 'help' page recommends not setting this to 't'
+    (visible-bell 1))
+#+end_src
 
-    :bind
-    ("C-c e" . (lambda () (interactive) (find-file user-init-file))))
+Check ~describe-personal-keybindings~ time to time, it shows,
+~was 'this function'~ like commentary for personally adapted keymap.
 
-  ;;;; Prevent Emacs Generating 'custom.el'
+Also, one can bind a keymap to go straight to the ~inti.el~ file with below.
+**Always check the correct parenthesis, before adding again**
+#+begin_src emacs-lisp :tangle no
+  :bind
+  ("C-c e" . (lambda () (interactive) (find-file user-init-file)))
+#+end_src
+
+*** Prevent Emacs from Generating 'custom.el'
+#+begin_src emacs-lisp
   (use-package cus-edit
     :custom
     (custom-file (concat user-emacs-directory "custom.el"))
     (when (file-exists-p custom-file)
       (load custom-file)))
+#+end_src
 
-  ;;;; Prepare Package Manager
-  ;;;;; Initialize
+*** Prepare Package Manager
+**** Initialize
+#+begin_src emacs-lisp
   (use-package package
     :config
     (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
     (package-initialize)
     (unless package-archive-contents
       (package-refresh-contents)))
+#+end_src
 
-  ;;;;; Auto Update
+**** Auto update
+#+begin_src emacs-lisp
   (use-package auto-package-update
     :ensure t
     :bind
@@ -69,57 +90,96 @@ Saw [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuratio
     :custom
     (setq auto-package-update-prompt-before-update t)
     (setq auto-package-update-delete-old-versions t))
+#+end_src
 
-  ;;;;; Diminish
+**** Ensure System Package
+#+begin_src emacs-lisp
+  (use-package use-package-ensure-system-package)
+#+end_src
+
+*** Diminish
+#+begin_src emacs-lisp
   (use-package diminish
     :ensure t)
+#+end_src
 
-  ;;;; Fix MacOS Shell Path Problem
+*** Try
+#+begin_src emacs-lisp
+  (use-package try
+    :ensure t)
+#+end_src
+*** Fix MacOS Shell Path Problem
+#+begin_src emacs-lisp
   (use-package exec-path-from-shell
     :ensure t
     :custom
     (when (memq window-system '(mac ns x))
       (exec-path-from-shell-initialize)))
+#+end_src
 
-  ;;;; Benchmark init time
-  ;; Can view the load time with
-  ;;   'M-x benchmark-init/show-durations-tabulated' or
-  ;;   'M-x benchmark-init/show-durations-tree'.
+*** Benchmark init time
+Can view the load time ~M-x benchmark-init/show-durations-tabulated~ or ~M-x benchmark-init/show-durations-tree~.
+#+begin_src emacs-lisp
   (use-package benchmark-init
     :ensure t
     :config
     ;; To disable collection of benchmark data after init is done.
     (add-hook 'after-init-hook 'benchmark-init/deactivate))
+#+end_src
 
-  ;;; Basic Editing Related
-  ;;;; Recent Files
+*** Helpful
+#+begin_src emacs-lisp
+  (use-package helpful
+    :ensure t
+    :bind
+    ("C-h F" . helpful-function)
+    ("C-h f" . helpful-callable)
+    ("C-h h" . helpful-at-point)
+    ("C-h k" . helpful-key)
+    ("C-h v" . helpful-variable)
+    ("C-h x" . helpful-command))
+#+end_src
+
+** Basic Editing Related
+*** Recent Files
+#+begin_src emacs-lisp
   (use-package recentf
     :bind
     ("C-x C-r" . recentf-open-files)		; 'C-x C-r' was 'find-file-read-only'
     :config
     (recentf-mode 1))
+#+end_src
 
-  ;;;; Remember Recent Command History
+*** Remember Recent Command History
+#+begin_src emacs-lisp
   (use-package savehist
     :config
     (savehist-mode 1))
+#+end_src
 
-  ;;;; Remember Last Cursor Postion from File
+*** Remember Last Cursor Postion from File
+#+begin_src emacs-lisp
   (use-package saveplace
     :config
     (save-place-mode 1))
+#+end_src
 
-  ;;;; Automatically Match Parenthesis
+*** Automatically Match Parenthesis
+#+begin_src emacs-lisp
   (use-package elec-pair
     :hook
     (prog-mode . electric-pair-mode))
+#+end_src
 
-  ;;;; Delete Selection as I Type
+*** Delete Selection as I Type
+#+begin_src emacs-lisp
   (use-package delsel
     :config
     (delete-selection-mode 1))
+#+end_src
 
-  ;;;; Clean Whitespaces
+*** Clean Whitespaces
+#+begin_src emacs-lisp
   (use-package whitespace
     ;; show whitespace with colors
     ;;:custom
@@ -128,8 +188,10 @@ Saw [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuratio
     :hook
     ;;(prog-mode . whitespace-mode)
     (before-save . whitespace-cleanup))
+#+end_src
 
-  ;;;; Files
+*** Files
+#+begin_src emacs-lisp
   (use-package files
     :config
     (setq safe-local-variable-values
@@ -138,29 +200,20 @@ Saw [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuratio
   ;;:custom
   ;; Prevent Emacs Generating Backup
   ;;(make-backup-files nil))
+#+end_src
 
-  ;;;; Revert Buffer Automatically
+*** Revert Buffer Automatically
+#+begin_src emacs-lisp
   (use-package autorevert
     :diminish (auto-revert-mode)
     :config
     (global-auto-revert-mode t))
+#+end_src
 
-  ;;;; Spellcheck
-  ;; Dependencies for Flyspell
-  ;; - aspell (or hunspell)
-  ;; - And also dictionary files if you chose to use hunspell
-  ;; - ';;.aff' && ';;.dic' (e.g. 'en_US.aff' and 'en_US.dic')
-  ;;
-  ;; Dictionary files should be placed in '/USER_HOME_DIR/Library/Spelling/' or '/Library/Spelling/'.
-  ;;
-  ;; Homebrew itself doesn't provide dictionaries for spell-checkers
-  ;; but you can download compatible dictionaries from other sources,
-  ;; such as, from here (https://cgit.freedesktop.org/libreoffice/dictionaries/tree/).
-  ;;
-  ;;   $ cd ~/Library/Spelling/
-  ;;   $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.aff
-  ;;   $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.dic
+*** Spellcheck
+#+begin_src emacs-lisp
   (use-package flyspell
+    :ensure-system-package aspell
     :diminish
     ;;:config
     ;;(setq ispell-program-name "hunspell")
@@ -168,23 +221,29 @@ Saw [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuratio
     :hook
     (find-file . flyspell-buffer)
     (text-mode . flyspell-mode)
-    ;;(org-mode . flyspell-prog-mode))
+    (org-mode . flyspell-prog-mode)
     (prog-mode . flyspell-prog-mode))
+#+end_src
 
-  ;;; Dev Related
-  ;;;; Eglot
+** Dev Related
+*** Eglot
+#+begin_src emacs-lisp
   (use-package eglot
     :hook
     (prog-mode . eglot-ensure))
+#+end_src
 
-  ;;;; Flymake
+*** Flymake
+#+begin_src emacs-lisp
   (use-package flymake
     :bind (:map flymake-mode-map
 		("M-n" . 'flymake-goto-next-error)
 		("M-p" . 'flymake-goto-prev-error)))
+#+end_src
 
-  ;;;; Eldoc Box
-  ;; See: https://github.com/casouri/eldoc-box
+*** Eldoc Box
+[[https://github.com/casouri/eldoc-box][Github]]
+#+begin_src emacs-lisp
   (use-package eldoc-box
     :ensure t)
   ;; Switching to triger 'eldoc-box-help-at-point' as needed.
@@ -193,75 +252,94 @@ Saw [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuratio
   ;; :config
   ;; (add-hook 'eglot-managed-mode-hook #'eldoc-box-hover-at-point-mode 1)
   ;; (add-hook 'elisp-mode-hook #'eldoc-box-hover-at-point-mode 1))
+#+end_src
 
-  ;;;; Auto completion
-  ;; See: https://github.com/minad/corfu
-  ;; for various additional configurations,
-  ;; also, new settings for emacs-30 and newer are introduced.
+*** Auto completion with corfu
+Check [[https://github.com/minad/corfu][Github]] for various additional configurations,
+also, new settings for emacs-30 and newer are introduced.
+#+begin_src emacs-lisp
   (use-package corfu
     :ensure t
     :config
     (setq corfu-auto 1)
     :init
     (global-corfu-mode))
+#+end_src
 
-  ;;;; Git
+*** Git
+#+begin_src emacs-lisp
   (use-package magit
     :ensure t
     :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+#+end_src
 
-  ;;; Minibuffer Related
-  ;;;; Which-key
+*** Org
+#+begin_src emacs-lisp
+  (use-package org
+    :config
+    (setq org-ellipsis " ⤵"))
+#+end_src
+** Minibuffer Related
+*** Which-key
+#+begin_src emacs-lisp
   (use-package which-key
     :ensure t
     :diminish
     :config
     (which-key-mode t))
+#+end_src
 
-  ;;;; Vertico
+*** Vertico
+#+begin_src emacs-lisp
   (use-package vertico
     :ensure t
     :init
     (vertico-mode))
+#+end_src
 
-  ;;;; Orderless
+*** Orderless
+#+begin_src emacs-lisp
   (use-package orderless
     :ensure t
     :custom
     (completion--styles '(oderless basic))
     (completion-category-defaults nil)
     (completion--category-overrides '((file (styles partial-completion)))))
+#+end_src
 
-  ;;;; Marginalia
+*** Marginalia
+#+begin_src emacs-lisp
   (use-package marginalia
     :ensure t
     :init
     (marginalia-mode))
 
-  ;;; UI Related
-  ;;;; Remove tool-bar
+#+end_src
+
+** UI Related
+*** Remove tool-bar
+#+begin_src emacs-lisp
   (use-package tool-bar
     :config
     (tool-bar-mode 0))
+#+end_src
 
-  ;;;; Remove scroll-bar
+*** Remove scroll-bar
+#+begin_src emacs-lisp
   (use-package scroll-bar
     :config
     (scroll-bar-mode 0))
+#+end_src
 
-  ;;;; Highlight Current Cursor Line
-  (use-package hl-line
+*** Little Margin around Window
+#+begin_src emacs-lisp
+  (use-package fringe
     :config
-    (global-hl-line-mode 1))
-
-  ;;;; Show Max Column Indicator
-  (use-package display-fill-column-indicator
-    :hook
-    (prog-mode . display-fill-column-indicator-mode)
-    (org-mode . display-fill-column-indicator-mode))
-
-  ;;;; Show Line Numbers
+    (set-fringe-mode 10))
+#+end_src
+*** Show Line Numbers
+#+begin_src emacs-lisp
   (use-package display-line-numbers
     :custom
     (display-line-numbers-type 'relative)
@@ -276,13 +354,34 @@ Saw [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuratio
     ;; org-mode should be explicitly enabled
     ;; prog-mode doesn't enable org-mode in this mode
     (org-mode . display-line-numbers-mode))
+#+end_src
 
-  ;;;; Show Column Number
+*** Highlight Current Line
+#+begin_src emacs-lisp
+  (use-package hl-line
+    :config
+    (global-hl-line-mode 1))
+#+end_src
+
+*** Show Column Number
+#+begin_src emacs-lisp
   (use-package simple
     :config
     (column-number-mode 1))
+#+end_src
 
-  ;;;; Fonts and Transparent Frames
+*** Show Max Column Indicator
+#+begin_src emacs-lisp
+  (use-package display-fill-column-indicator
+    :config
+    (setq display-fill-column-indicator-column 80)
+    :hook
+    (prog-mode . display-fill-column-indicator-mode)
+    (org-mode . display-fill-column-indicator-mode))
+#+end_src
+
+*** Fonts and Transparent Frames
+#+begin_src emacs-lisp
   (use-package faces
     :config
     (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
@@ -304,23 +403,29 @@ Saw [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuratio
     ;; Rather this works (the old way).
     (set-frame-parameter (selected-frame) 'alpha '(95 95))
     (add-to-list 'default-frame-alist '(alpha 95 95)))
+#+end_src
 
-  ;;;; Color Theme
-  ;; Takes over 500ms to load this theme.
+*** Show URLs as a Clickable Link
+#+begin_src emacs-lisp
+  (use-package goto-addr
+    :hook
+    (prog-mode . goto-address-prog-mode)
+    (text-mode . goto-address-prog-mode))
+#+end_src
+*** Color Theme
+Takes over 500ms to load below
+#+begin_src emacs-lisp :tangle no
   ;; (use-package catppuccin-theme
   ;;   :ensure t
   ;;   :config
   ;;   (load-theme 'catppuccin t)
   ;;   (setq catppuccin-flavor 'latte)
   ;;   (catppuccin-reload))
-  ;; Rather switched to 'modus-operandi'.
+#+end_src
+
+Rather switched to ~modus-operandi~.
+#+begin_src emacs-lisp
   (use-package custom
     :config
     (load-theme 'modus-operandi))
-
-  ;;;; Show URLs as a Clickable Link
-  (use-package goto-addr
-    :hook
-    (prog-mode . goto-address-prog-mode)
-    (text-mode . goto-address-prog-mode))
 #+end_src
