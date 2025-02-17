@@ -1,18 +1,19 @@
-# PATH
-# (Link to the intersting discussion about where to put which var: 
-# https://unix.stackexchange.com/a/71258)
-export PATH="/Users/jeon/.local/bin${PATH:+:$PATH}"
-export CPATH="/Users/jeon/.local/bin${CPATH:+:$CPATH}"
-export LIBRARY_PATH="/Users/jeon/.local/lib${LIBRARY_PATH:+:$LIBRARY_PATH}"
-export LD_LIBRARY_PATH="/Users/jeon/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-export C_INCLUDE_PATH="/Users/jeon/.local/include${C_INCLUDE_PATH:+:$C_INCLUDE_PATH}"
-export CPLUS_INCLUDE_PATH="/Users/jeon/.local/include${CPLUS_INCLUDE_PATH:+:$CPLUS_INCLUDE_PATH}"
+# Settings
+bindkey -v
+setopt HIST_SAVE_NO_DUPS
 
-# GPG
-export GPG_TTY=$(tty)
+# Additional Plugins
+# zsh-syntax-highlighting
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# zsh-autosuggestions
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# zsh-autocomplete
+source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
-# Personal configuration
-export LANG=en_US.UTF-8
+# for Prompt(pure)
+fpath+=("$(brew --prefix)/share/zsh/site-functions")
+autoload -U promptinit; promptinit
+prompt pure
 
-# Aliases
-alias v="vim"
+# Reading List
+# https://thevaluable.dev/zsh-install-configure-mouseless/
