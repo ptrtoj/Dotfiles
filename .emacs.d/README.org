@@ -1,24 +1,24 @@
 #+title: Emacs Configuration
-#+author: WooHyoung Jeon
+#+author: I Do Jeon
 #+email: jeon@ptrtoj.com
 #+options: toc:nil num:nil
 #+startup: show3levels
-* Jeon's Extremely Minimal ALT + CTRL + SHIFT
-Saw [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuration.org][this]] and had to do this.
 
-** Notes
+* Jeon's Extremely Minimal ALT + CTRL + SHIFT
+
+** Preface
 *** Dependencies
-Basically, ~use-package-ensure-system-package~ should handle this,
+Basically, ~use-package-ensure-system-package~ should handle this(currently disabled),
 but always check if the dependencies are correctly installed or not.
 
 1. for ~flyspell~
-   - ~aspell~ (or hunspell)
-   - And dictionary files, such as ~.aff~ && ~.dic~ (e.g. ~en_US.aff~ and ~en_US.dic~)
+   - ~aspell~ (or ~hunspell~)
+   - And dictionary files, such as ~.aff~ & ~.dic~ (e.g. ~en_US.aff~ and ~en_US.dic~)
 
 Dictionary files should be placed in ~/USER_HOME_DIR/Library/Spelling/~ or ~/Library/Spelling/~.
 
 However, ~homebrew~ itself doesn't provide dictionaries for spell-checkers,
-but you can download compatible dictionaries from other sources, such as [[https://cgit.freedesktop.org/libreoffice/dictionaries/tree/][this]].
+so you have to download compatible dictionaries from other sources, like [[https://cgit.freedesktop.org/libreoffice/dictionaries/tree/][below]].
 
 #+begin_src zsh :tangle no
   $ cd ~/Library/Spelling/
@@ -26,24 +26,24 @@ but you can download compatible dictionaries from other sources, such as [[https
   $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.dic
 #+end_src
 
-*** Useful Links
-**** Configurations
-1. Thomas Ingram's 'My Emacs Config': https://taingram.org/init.html
-2. Purcell's 'A reasonable Emacs config': https://github.com/purcell/emacs.d
+*** References
+**** Configuration Examples
+1. [[https://github.com/purcell/emacs.d][Github:purcell/emacs.d]]
+2. [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuration.org][Github:hrs/dotfiles]]
+3. [[https://taingram.org/init.html]["My Emacs Init" by T. Ingram]]
 
-**** Link description as ~See:~
-See this [[https://ell.stackexchange.com/q/124607][Stack Exchange]] question.
-
-*** TODO
+*** To-dos
 1. [ ] Install ~markdown-mode~
    1) [ ] Check whether ~prog-mode~ include ~markdown-mode~ or not
+2. [ ] Ligatures
 
-** Prepare Emacs Itself
-*** Emacs
+** Built-ins
+*** Bare bones
+**** Emacs
 #+begin_src emacs-lisp
   (use-package emacs
     :custom
-    (user-full-name "WooHyoung Jeon")
+    (user-full-name "I Do Jeon")
     (user-mail-address "jeon@ptrtoj.com")	; from 'startup.el'
     (inhibit-startup-screen 1)			; from 'startup.el'
     (use-short-answers 1)			; 'help' page recommends not setting this to 't'
@@ -51,16 +51,19 @@ See this [[https://ell.stackexchange.com/q/124607][Stack Exchange]] question.
 #+end_src
 
 Check ~describe-personal-keybindings~ time to time, it shows,
-~was 'this function'~ like commentary for personally adapted keymap.
+commentary at the rightmost column such as ~was 'this function'~ for personally adapted keymap.
 
 Also, one can bind a keymap to go straight to the ~inti.el~ file with below.
-**Always check the correct parenthesis, before adding again**
+
+**Always check the correct parenthesis, before adding again** below should be included as
+part of above code block, if you choose to use.
+
 #+begin_src emacs-lisp :tangle no
   :bind
   ("C-c e" . (lambda () (interactive) (find-file user-init-file)))
 #+end_src
 
-*** Prevent Emacs from Generating 'custom.el'
+**** Prevent Emacs from Generating 'custom.el'
 #+begin_src emacs-lisp
   (use-package cus-edit
     :custom
@@ -69,79 +72,7 @@ Also, one can bind a keymap to go straight to the ~inti.el~ file with below.
       (load custom-file)))
 #+end_src
 
-*** Prepare Package Manager
-**** Initialize
-#+begin_src emacs-lisp
-  (use-package package
-    :config
-    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-    (package-initialize)
-    (unless package-archive-contents
-      (package-refresh-contents)))
-#+end_src
-
-**** Auto update
-#+begin_src emacs-lisp
-  (use-package auto-package-update
-    :ensure t
-    :bind
-    ("C-c u p" . package-refresh-contents)	; provided from 'package' itself
-    ("C-c u g" . auto-package-update-now-async)	; provided from 'auto-package-update' package
-    :custom
-    (setq auto-package-update-prompt-before-update t)
-    (setq auto-package-update-delete-old-versions t))
-#+end_src
-
-**** Ensure System Package
-#+begin_src emacs-lisp
-  (use-package use-package-ensure-system-package)
-#+end_src
-
-*** Diminish
-#+begin_src emacs-lisp
-  (use-package diminish
-    :ensure t)
-#+end_src
-
-*** Try
-#+begin_src emacs-lisp
-  (use-package try
-    :ensure t)
-#+end_src
-*** Fix MacOS Shell Path Problem
-#+begin_src emacs-lisp
-  (use-package exec-path-from-shell
-    :ensure t
-    :custom
-    (when (memq window-system '(mac ns x))
-      (exec-path-from-shell-initialize)))
-#+end_src
-
-*** Benchmark init time
-Can view the load time ~M-x benchmark-init/show-durations-tabulated~ or ~M-x benchmark-init/show-durations-tree~.
-#+begin_src emacs-lisp
-  (use-package benchmark-init
-    :ensure t
-    :config
-    ;; To disable collection of benchmark data after init is done.
-    (add-hook 'after-init-hook 'benchmark-init/deactivate))
-#+end_src
-
-*** Helpful
-#+begin_src emacs-lisp
-  (use-package helpful
-    :ensure t
-    :bind
-    ("C-h F" . helpful-function)
-    ("C-h f" . helpful-callable)
-    ("C-h h" . helpful-at-point)
-    ("C-h k" . helpful-key)
-    ("C-h v" . helpful-variable)
-    ("C-h x" . helpful-command))
-#+end_src
-
-** Basic Editing Related
-*** Recent Files
+**** Recent Files
 #+begin_src emacs-lisp
   (use-package recentf
     :bind
@@ -150,48 +81,32 @@ Can view the load time ~M-x benchmark-init/show-durations-tabulated~ or ~M-x ben
     (recentf-mode 1))
 #+end_src
 
-*** Remember Recent Command History
+**** Remember Recent Command History
 #+begin_src emacs-lisp
   (use-package savehist
     :config
     (savehist-mode 1))
 #+end_src
 
-*** Remember Last Cursor Postion from File
+**** Remember Last Cursor Postion from File
 #+begin_src emacs-lisp
   (use-package saveplace
     :config
     (save-place-mode 1))
 #+end_src
 
-*** Automatically Match Parenthesis
-#+begin_src emacs-lisp
-  (use-package elec-pair
-    :hook
-    (prog-mode . electric-pair-mode))
-#+end_src
-
-*** Delete Selection as I Type
-#+begin_src emacs-lisp
-  (use-package delsel
+**** TODO Benchmark init time
+Can view the load time ~M-x benchmark-init/show-durations-tabulated~ or ~M-x benchmark-init/show-durations-tree~.
+#+begin_src emacs-lisp :tangle no
+  (use-package benchmark-init
+    :ensure t
     :config
-    (delete-selection-mode 1))
+    ;; To disable collection of benchmark data after init is done.
+    (add-hook 'after-init-hook 'benchmark-init/deactivate))
 #+end_src
 
-*** Clean Whitespaces
-#+begin_src emacs-lisp
-  (use-package whitespace
-    ;; show whitespace with colors
-    ;;:custom
-    ;;(whitespace-style '(face tabs tab-mark trailing))
-    ;;(custom-set-faces '(whitespace-tab ((t (:foreground "#020202")))))
-    :hook
-    ;;(prog-mode . whitespace-mode)
-    (before-save . whitespace-cleanup))
-#+end_src
-
-*** Files
-#+begin_src emacs-lisp
+**** TODO Files
+#+begin_src emacs-lisp :tangle no
   (use-package files
     :config
     (setq safe-local-variable-values
@@ -202,15 +117,16 @@ Can view the load time ~M-x benchmark-init/show-durations-tabulated~ or ~M-x ben
   ;;(make-backup-files nil))
 #+end_src
 
-*** Revert Buffer Automatically
-#+begin_src emacs-lisp
+**** TODO Revert Buffer Automatically
+#+begin_src emacs-lisp :tangle no
   (use-package autorevert
     :diminish (auto-revert-mode)
     :config
     (global-auto-revert-mode t))
 #+end_src
 
-*** Spellcheck
+*** Editing
+**** Spellcheck
 #+begin_src emacs-lisp
   (use-package flyspell
     :ensure-system-package aspell
@@ -225,120 +141,55 @@ Can view the load time ~M-x benchmark-init/show-durations-tabulated~ or ~M-x ben
     (prog-mode . flyspell-prog-mode))
 #+end_src
 
-** Dev Related
-*** Eglot
+**** Automatically Match Parenthesis
 #+begin_src emacs-lisp
-  (use-package eglot
+  (use-package elec-pair
     :hook
-    (prog-mode . eglot-ensure))
+    (prog-mode . electric-pair-mode))
 #+end_src
 
-*** Flymake
+**** Delete Selection as I Type
 #+begin_src emacs-lisp
-  (use-package flymake
-    :bind (:map flymake-mode-map
-		("M-n" . 'flymake-goto-next-error)
-		("M-p" . 'flymake-goto-prev-error)))
-#+end_src
-
-*** Eldoc Box
-[[https://github.com/casouri/eldoc-box][Github]]
-#+begin_src emacs-lisp
-  (use-package eldoc-box
-    :ensure t)
-  ;; Switching to triger 'eldoc-box-help-at-point' as needed.
-  ;; TODO: bind a key
-  ;; BTW, 'M-x e-he' will bring the same function
-  ;; :config
-  ;; (add-hook 'eglot-managed-mode-hook #'eldoc-box-hover-at-point-mode 1)
-  ;; (add-hook 'elisp-mode-hook #'eldoc-box-hover-at-point-mode 1))
-#+end_src
-
-*** Auto completion with corfu
-Check [[https://github.com/minad/corfu][Github]] for various additional configurations,
-also, new settings for emacs-30 and newer are introduced.
-#+begin_src emacs-lisp
-  (use-package corfu
-    :ensure t
+  (use-package delsel
     :config
-    (setq corfu-auto 1)
-    :init
-    (global-corfu-mode))
+    (delete-selection-mode 1))
 #+end_src
 
-*** Git
+**** Clean Whitespaces
 #+begin_src emacs-lisp
-  (use-package magit
-    :ensure t
-    :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+  (use-package whitespace
+    ;; show whitespace with colors
+    ;;:custom
+    ;;(whitespace-style '(face tabs tab-mark trailing))
+    ;;(custom-set-faces '(whitespace-tab ((t (:foreground "#020202")))))
+    :hook
+    ;;(prog-mode . whitespace-mode)
+    (before-save . whitespace-cleanup))
 #+end_src
 
-*** Org
-#+begin_src emacs-lisp
-  (use-package org
-    :config
-    (setq org-ellipsis " ⤵"))
-#+end_src
-** Minibuffer Related
-*** Which-key
-#+begin_src emacs-lisp
-  (use-package which-key
-    :ensure t
-    :diminish
-    :config
-    (which-key-mode t))
-#+end_src
-
-*** Vertico
-#+begin_src emacs-lisp
-  (use-package vertico
-    :ensure t
-    :init
-    (vertico-mode))
-#+end_src
-
-*** Orderless
-#+begin_src emacs-lisp
-  (use-package orderless
-    :ensure t
-    :custom
-    (completion--styles '(oderless basic))
-    (completion-category-defaults nil)
-    (completion--category-overrides '((file (styles partial-completion)))))
-#+end_src
-
-*** Marginalia
-#+begin_src emacs-lisp
-  (use-package marginalia
-    :ensure t
-    :init
-    (marginalia-mode))
-
-#+end_src
-
-** UI Related
-*** Remove tool-bar
+*** UI Part
+**** Remove tool-bar
 #+begin_src emacs-lisp
   (use-package tool-bar
     :config
     (tool-bar-mode 0))
 #+end_src
 
-*** Remove scroll-bar
+**** Remove scroll-bar
 #+begin_src emacs-lisp
   (use-package scroll-bar
     :config
     (scroll-bar-mode 0))
 #+end_src
 
-*** Little Margin around Window
+**** Little Margin around Window
 #+begin_src emacs-lisp
   (use-package fringe
     :config
     (set-fringe-mode 10))
 #+end_src
-*** Show Line Numbers
+
+**** Show Line Numbers
 #+begin_src emacs-lisp
   (use-package display-line-numbers
     :custom
@@ -356,37 +207,13 @@ also, new settings for emacs-30 and newer are introduced.
     (org-mode . display-line-numbers-mode))
 #+end_src
 
-*** Highlight Current Line
-#+begin_src emacs-lisp
-  (use-package hl-line
-    :config
-    (global-hl-line-mode 1))
-#+end_src
-
-*** Show Column Number
-#+begin_src emacs-lisp
-  (use-package simple
-    :config
-    (column-number-mode 1))
-#+end_src
-
-*** Show Max Column Indicator
-#+begin_src emacs-lisp
-  (use-package display-fill-column-indicator
-    :config
-    (setq display-fill-column-indicator-column 80)
-    :hook
-    (prog-mode . display-fill-column-indicator-mode)
-    (org-mode . display-fill-column-indicator-mode))
-#+end_src
-
-*** Fonts and Transparent Frames
+**** Fonts and Transparent Frames
 #+begin_src emacs-lisp
   (use-package faces
     :config
     (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
     (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-    (add-to-list 'default-frame-alist '(font . "Berkeley Mono"))
+    (add-to-list 'default-frame-alist '(font . "BerkeleyMono Nerd Font"))
 
     ;; Fullscreen on Startup
     ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -405,26 +232,204 @@ also, new settings for emacs-30 and newer are introduced.
     (add-to-list 'default-frame-alist '(alpha 95 95)))
 #+end_src
 
-*** Show URLs as a Clickable Link
+**** Show URLs as a Clickable Link
 #+begin_src emacs-lisp
   (use-package goto-addr
     :hook
     (prog-mode . goto-address-prog-mode)
     (text-mode . goto-address-prog-mode))
 #+end_src
-*** Color Theme
-Takes over 500ms to load below
-#+begin_src emacs-lisp :tangle no
-  ;; (use-package catppuccin-theme
-  ;;   :ensure t
-  ;;   :config
-  ;;   (load-theme 'catppuccin t)
-  ;;   (setq catppuccin-flavor 'latte)
-  ;;   (catppuccin-reload))
+
+*** Package Manager
+#+begin_src emacs-lisp
+  (use-package package
+    :config
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+    (package-initialize)
+    (unless package-archive-contents
+      (package-refresh-contents)))
 #+end_src
 
-Rather switched to ~modus-operandi~.
+** 3rd Party Plugins
+**** Auto update
 #+begin_src emacs-lisp
+  (use-package auto-package-update
+    :ensure t
+    :bind
+    ("C-c u p" . package-refresh-contents)	; provided from 'package' itself
+    ("C-c u g" . auto-package-update-now-async)	; provided from 'auto-package-update' package
+    :custom
+    (setq auto-package-update-prompt-before-update t)
+    (setq auto-package-update-delete-old-versions t))
+#+end_src
+
+**** TODO Ensure System Package
+#+begin_src emacs-lisp :tangle no
+  (use-package use-package-ensure-system-package)
+#+end_src
+
+**** TODO Try
+#+begin_src emacs-lisp :tangle no
+  (use-package try
+    :ensure t)
+#+end_src
+
+**** TODO Fix MacOS Shell Path Problem
+#+begin_src emacs-lisp :tangle no
+  (use-package exec-path-from-shell
+    :ensure t
+    :custom
+    (when (memq window-system '(mac ns x))
+      (exec-path-from-shell-initialize)))
+#+end_src
+
+**** Diminish
+#+begin_src emacs-lisp
+  (use-package diminish
+    :ensure t)
+#+end_src
+
+**** TODO Helpful
+#+begin_src emacs-lisp :tangle no
+  (use-package helpful
+    :ensure t
+    :bind
+    ("C-h F" . helpful-function)
+    ("C-h f" . helpful-callable)
+    ("C-h h" . helpful-at-point)
+    ("C-h k" . helpful-key)
+    ("C-h v" . helpful-variable)
+    ("C-h x" . helpful-command))
+#+end_src
+
+*** Minibuffer Related
+**** Vertico
+#+begin_src emacs-lisp
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode))
+#+end_src
+
+**** Marginalia
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :ensure t
+    :init
+    (marginalia-mode))
+#+end_src
+
+**** Orderless
+#+begin_src emacs-lisp
+  (use-package orderless
+    :ensure t
+    :custom
+    (completion--styles '(oderless basic))
+    (completion-category-defaults nil)
+    (completion--category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+*** Org
+#+begin_src emacs-lisp
+  (use-package org
+    :config
+    (setq org-ellipsis " ⤵"))
+#+end_src
+
+*** Git
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure t
+    :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+#+end_src
+
+*** Programming
+**** Eglot
+#+begin_src emacs-lisp
+  (use-package eglot
+    :hook
+    (prog-mode . eglot-ensure))
+#+end_src
+
+**** Flymake
+#+begin_src emacs-lisp
+  (use-package flymake
+    :bind (:map flymake-mode-map
+		("M-n" . 'flymake-goto-next-error)
+		("M-p" . 'flymake-goto-prev-error)))
+#+end_src
+
+**** Corfu
+#+begin_src emacs-lisp
+  (use-package corfu
+    :ensure t
+    :config
+    (setq corfu-auto 1)
+    :init
+    (global-corfu-mode))
+#+end_src
+
+*** UI Part
+**** Eldoc Box
+[[https://github.com/casouri/eldoc-box][Github]]
+#+begin_src emacs-lisp
+  (use-package eldoc-box
+    :ensure t)
+  ;; Switching to triger 'eldoc-box-help-at-point' as needed.
+  ;; TODO: bind a key
+  ;; BTW, 'M-x e-he' will bring the same function
+  ;; :config
+  ;; (add-hook 'eglot-managed-mode-hook #'eldoc-box-hover-at-point-mode 1)
+  ;; (add-hook 'elisp-mode-hook #'eldoc-box-hover-at-point-mode 1))
+#+end_src
+
+**** Which-key
+#+begin_src emacs-lisp
+  (use-package which-key
+    :ensure t
+    :diminish
+    :config
+    (which-key-mode t))
+#+end_src
+
+**** Highlight Current Line
+#+begin_src emacs-lisp
+  (use-package hl-line
+    :config
+    (global-hl-line-mode 1))
+#+end_src
+
+**** Show Column Number
+#+begin_src emacs-lisp
+  (use-package simple
+    :config
+    (column-number-mode 1))
+#+end_src
+
+**** Show Max Column Indicator
+#+begin_src emacs-lisp
+  (use-package display-fill-column-indicator
+    :config
+    (setq display-fill-column-indicator-column 80)
+    :hook
+    (prog-mode . display-fill-column-indicator-mode)
+    (org-mode . display-fill-column-indicator-mode))
+#+end_src
+
+**** Color Theme
+Takes over 500ms to load below
+#+begin_src emacs-lisp
+  (use-package catppuccin-theme
+     :ensure t
+     :config
+     (load-theme 'catppuccin t)
+     (setq catppuccin-flavor 'latte)
+     (catppuccin-reload))
+#+end_src
+
+If you want minimum load time, switch to ~modus-operandi~.
+#+begin_src emacs-lisp :tangle no
   (use-package custom
     :config
     (load-theme 'modus-operandi))

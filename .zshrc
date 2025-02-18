@@ -1,5 +1,4 @@
 # Settings
-bindkey -v
 setopt HIST_SAVE_NO_DUPS
 
 # Additional Plugins

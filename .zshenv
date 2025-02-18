@@ -15,8 +15,8 @@ export GPG_TTY=$(tty)
 
 export LANG=en_US.UTF-8
 
-export EDITOR="vim"
-export VISUAL="vim"
+#export EDITOR="nvim"
+#export VISUAL="nvim"
 
 alias v="vim"
 
