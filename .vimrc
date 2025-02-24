@@ -3,13 +3,13 @@
 "set nrformats-=octal               " increment as decimal, even with leading 0
 
 " Enable filetype detection
-filetype on
-filetype plugin on
-filetype indent on
-syntax 	on
+filetype    on
+filetype    plugin on
+filetype    indent on
+syntax	    on
 
 set autoindent
-set expandtab
+set noexpandtab                     " I don't want to change tab into spaces
 set softtabstop     =4
 set shiftwidth      =4
 set shiftround
@@ -38,17 +38,13 @@ set splitright
 
 "set cursorline
 set colorcolumn     =80
-set wrapscan
-set report          =0
-set synmaxcol       =200
-     
-" TODO: Fix, doesn't work on MacOS + iTerm2
-"set list
-"if has('multi_byte') && &encoding ==# 'utf-8'
-"    set listchars =tab:▸\ ,extends:❯,precedes:❮,nbsp:±
-"else
-"    set listchars =tab:>\ ,extends:>,precedes:<,nbsp:.
-"endif
+"set wrapscan
+"set report          =0
+"set synmaxcol       =200
+
+set list
+set showbreak=↪\ 
+set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 
 set nobackup
 "set backupdir   =$HOME/.vim/files/backup/
