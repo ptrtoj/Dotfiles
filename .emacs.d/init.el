@@ -322,20 +322,6 @@
 ;;   :config
 ;;   (scroll-bar-mode 0))
 
-;;;; Benchmark init time
-;; Github: https://github.com/dholm/benchmark-init-el
-;; Can view the load time 'M-x benchmark-init/show-durations-tabulated' or 'M-x benchmark-init/show-durations-tree'.
-;; (use-package benchmark-init
-;;   :ensure t
-;;   :config
-;;   ;; To disable collection of benchmark data after init is done.
-;;   (add-hook 'after-init-hook 'benchmark-init/deactivate))
-
-;;;; Org
-;; (use-package org
-;;   :config
-;;   (setq org-ellipsis " ⤵"))
-
 ;;;; Auto update
 ;; Github: https://github.com/rranelli/auto-package-update.el
 ;; (use-package auto-package-update
@@ -346,10 +332,6 @@
 ;;   :custom
 ;;   (setq auto-package-update-prompt-before-update t)
 ;;   (setq auto-package-update-delete-old-versions t))
-
-;;;; Ensure System Package
-;; Github: https://github.com/waymondo/use-package-ensure-system-package
-;; (use-package use-package-ensure-system-package)
 
 ;;;; Magit
 ;; Webpage: https://magit.vc
@@ -369,20 +351,11 @@
 ;; ;; (add-hook 'eglot-managed-mode-hook #'eldoc-box-hover-at-point-mode 1)
 ;; ;; (add-hook 'elisp-mode-hook #'eldoc-box-hover-at-point-mode 1))
 
-;;;; Helpful
-;; Github: https://github.com/Wilfred/helpful
-;; (use-package helpful
-;;   :ensure t
-;;   :bind
-;;   ("C-h F" . helpful-function)
-;;   ("C-h f" . helpful-callable)
-;;   ("C-h h" . helpful-at-point)
-;;   ("C-h k" . helpful-key)
-;;   ("C-h v" . helpful-variable)
-;;   ("C-h x" . helpful-command))
-
 ;; Also, there are
 ;; - Try, https://github.com/larstvei/Try
 ;; - Diminish, https://github.com/emacsmirror/diminish
+;; - Ensure System Package, https://github.com/waymondo/use-package-ensure-system-package
+;; - Helpful, https://github.com/Wilfred/helpful
+;; - Benchmark Init Time, https://github.com/dholm/benchmark-init-el
 
 ;;; init.el ends here
