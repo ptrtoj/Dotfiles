@@ -128,8 +128,8 @@
   :ensure t
   :config
   (load-theme 'catppuccin t)
-  ;; (setq catppuccin-flavor 'latte)
-  (setq catppuccin-flavor 'mocha)
+  (setq catppuccin-flavor 'latte)
+  ;; (setq catppuccin-flavor 'mocha)
   (catppuccin-reload))
 
 ;; If you want minimum load time, switch to ~modus-operandi~.
