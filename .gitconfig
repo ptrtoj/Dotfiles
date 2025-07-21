@@ -2,7 +2,8 @@
     name = Ido Jeon
     email = jeon@ptrtoj.com
     signingkey = 6B571713E894EC43
-[commit]
+[gpg]
+    program = /opt/homebrew/bin/gpg[commit]
     gpgsign = true
 [alias]
     a = add
@@ -12,5 +13,4 @@
     p = push
     pl = pull
     s = status
-
 
