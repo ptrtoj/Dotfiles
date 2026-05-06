@@ -1,0 +1,10 @@
+# MacOS
+.DS_Store
+
+# Emacs
+.emacs.d/*
+!.emacs.d/init.el
+*~
+
+# Neovim
+lazy-lock.json

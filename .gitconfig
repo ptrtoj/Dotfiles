@@ -1,0 +1,11 @@
+[user]
+    name = Ido Jeon
+    email = jeon@ptrtoj.com
+    signingkey = C242AB9B7812AEECFCE7742B6B571713E894EC43
+[gpg]
+    program = /opt/homebrew/bin/gpg
+[commit]
+    gpgsign = true
+[alias]
+    l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+
