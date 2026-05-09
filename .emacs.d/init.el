@@ -102,8 +102,13 @@
   ;;(add-to-list 'default-frame-alist '(alpha-background . 90))
 
   ;; Rather this works (the old way).
-  (set-frame-parameter (selected-frame) 'alpha '(99 99))
+  (set-frame-parameter (selected-frame) 'alpha '(95 95))
   (add-to-list 'default-frame-alist '(alpha 95 95)))
+
+;;;; Remove scroll-bar
+(use-package scroll-bar
+  :config
+  (scroll-bar-mode 0))
 
 ;;;; Prevent Emacs from Generating 'custom.el'
 (use-package cus-edit
@@ -111,6 +116,40 @@
   (custom-file (concat user-emacs-directory "custom.el"))
   (when (file-exists-p custom-file)
 	(load custom-file)))
+
+;;;; Delete Selection as I Type
+(use-package delsel
+  :config
+  (delete-selection-mode 1))
+
+;;;; Clean White spaces
+(use-package whitespace
+  ;; show whitespace with colors
+  :custom
+  (whitespace-style '(face tabs tab-mark trailing))
+  (custom-set-faces '(whitespace-tab ((t (:foreground "#020202")))))
+  :hook
+  (prog-mode . whitespace-mode)
+  (before-save . whitespace-cleanup))
+
+;;;; Recent Files
+(use-package recentf
+  :bind
+  ;; 'C-x C-r' was 'find-file-read-only'
+  ("C-x C-r" . recentf-open-files)
+  :config
+  (recentf-mode 1))
+
+;;;; Eglot
+(use-package eglot
+  :hook
+  (prog-mode . eglot-ensure))
+
+;;;; Flymake
+(use-package flymake
+  :bind (:map flymake-mode-map
+			  ("M-n" . 'flymake-goto-next-error)
+			  ("M-p" . 'flymake-goto-prev-error)))
 
 ;;;; Package Manager
 (use-package package
@@ -120,6 +159,18 @@
 ;; 	(package-initialize)
 ;; 	(unless package-archive-contents
 ;; 	  (package-refresh-contents)))
+
+;;;; Auto update
+;; Github: https://github.com/rranelli/auto-package-update.el
+(use-package auto-package-update
+  :ensure t
+  :bind
+  ("C-c u p" . package-refresh-contents)	; provided from 'package' itself
+  ("C-c u g" . auto-package-update-now-async)	; provided from 'auto-package-update' package
+  :custom
+  (setq auto-package-update-interval 15)
+  (setq auto-package-update-prompt-before-update t)
+  (setq auto-package-update-delete-old-versions t))
 
 ;;;; Fix MacOS Shell Path Problem
 ;; Github: https://github.com/purcell/exec-path-from-shell
@@ -145,8 +196,58 @@
 ;;   :config
 ;;   (load-theme 'modus-operandi))
 
-;;; Archive
+;;;; Which-key
+;; Github: https://github.com/justbur/emacs-which-key
+;;
+;; ARCHIVE NOTICE
+;;
+;; which-key is now included in the master branch of Emacs and will likely be released with Emacs v30. Bug reports and contributions to which-key will now be considered through standard Emacs channels, and this repository is being archived.
+(use-package which-key
+  :ensure t
+  :diminish
+  :config
+  (which-key-mode t))
 
+;;;; Vertico
+;; Github: https://github.com/minad/vertico
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode))
+
+;;;; Marginalia
+;; Github: https://github.com/minad/marginalia
+(use-package marginalia
+  :ensure t
+  :init
+  (marginalia-mode))
+
+;;;; Corfu
+;; Github: https://github.com/minad/corfu
+(use-package corfu
+  :ensure t
+  :config
+  (setq corfu-auto 1)
+  :init
+  (global-corfu-mode))
+
+;;;; Orderless
+;; Github: https://github.com/oantolin/orderless
+;; (use-package orderless
+;;   :ensure t
+;;   :custom
+;;   (completion--styles '(oderless basic))
+;;   (completion-category-defaults nil)
+;;   (completion--category-overrides '((file (styles partial-completion)))))
+
+;;;; Magit
+;; Webpage: https://magit.vc
+(use-package magit
+  :ensure t
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+;;; Archive
 ;; ;;;; Files
 ;; (use-package files
 ;;   :config
@@ -199,72 +300,6 @@
 ;; 								 ("map" . 8614)   ; ↦
 ;; 								 )))
 
-;;;; Delete Selection as I Type
-;; (use-package delsel
-;;   :config
-;;   (delete-selection-mode 1))
-
-;;;; Clean White spaces
-;; (use-package whitespace
-;;   ;; show whitespace with colors
-;;   :custom
-;;   (whitespace-style '(face tabs tab-mark trailing))
-;;   (custom-set-faces '(whitespace-tab ((t (:foreground "#020202")))))
-;;   :hook
-;;   (prog-mode . whitespace-mode)
-;;   (before-save . whitespace-cleanup))
-
-;; ;;;; Which-key
-;; ;; Github: https://github.com/justbur/emacs-which-key
-;; (use-package which-key
-;;   :ensure t
-;;   :diminish
-;;   :config
-;;   (which-key-mode t))
-
-;; ;;;; Vertico
-;; ;; Github: https://github.com/minad/vertico
-;; (use-package vertico
-;;   :ensure t
-;;   :init
-;;   (vertico-mode))
-
-;; ;;;; Marginalia
-;; ;; Github: https://github.com/minad/marginalia
-;; (use-package marginalia
-;;   :ensure t
-;;   :init
-;;   (marginalia-mode))
-
-;; ;;;; Orderless
-;; ;; Github: https://github.com/oantolin/orderless
-;; (use-package orderless
-;;   :ensure t
-;;   :custom
-;;   (completion--styles '(oderless basic))
-;;   (completion-category-defaults nil)
-;;   (completion--category-overrides '((file (styles partial-completion)))))
-
-;; ;;;; Eglot
-;; (use-package eglot
-;;   :hook
-;;   (prog-mode . eglot-ensure))
-
-;; ;;;; Flymake
-;; (use-package flymake
-;;   :bind (:map flymake-mode-map
-;; 			  ("M-n" . 'flymake-goto-next-error)
-;; 			  ("M-p" . 'flymake-goto-prev-error)))
-
-;; ;;;; Corfu
-;; ;; Github: https://github.com/minad/corfu
-;; (use-package corfu
-;;   :ensure t
-;;   :config
-;;   (setq corfu-auto 1)
-;;   :init
-;;   (global-corfu-mode))
-
 ;; (Defun libj/ui ()
 ;;   "Uncomment region and indent"
 ;;   (interactive)
@@ -279,14 +314,6 @@
 ;;   (libj/ui)
 ;;   (comment-region (region-beginning) (region-end)))
 
-;;;; Recent Files
-;; (use-package recentf
-;;   :bind
-;;   ;; 'C-x C-r' was 'find-file-read-only'
-;;   ("C-x C-r" . recentf-open-files)
-;;   :config
-;;   (recentf-mode 1))
-
 ;;;; Show Column Number
 ;; (use-package simple
 ;;   :config
@@ -297,29 +324,6 @@
 ;;   :diminish (auto-revert-mode)
 ;;   :config
 ;;   (global-auto-revert-mode t))
-
-;;;; Remove scroll-bar
-;; (use-package scroll-bar
-;;   :config
-;;   (scroll-bar-mode 0))
-
-;;;; Auto update
-;; Github: https://github.com/rranelli/auto-package-update.el
-;; (use-package auto-package-update
-;;   :ensure t
-;;   :bind
-;;   ("C-c u p" . package-refresh-contents)	; provided from 'package' itself
-;;   ("C-c u g" . auto-package-update-now-async)	; provided from 'auto-package-update' package
-;;   :custom
-;;   (setq auto-package-update-prompt-before-update t)
-;;   (setq auto-package-update-delete-old-versions t))
-
-;;;; Magit
-;; Webpage: https://magit.vc
-;; (use-package magit
-;;   :ensure t
-;;   :custom
-;;   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 ;;;; Eldoc Box
 ;; Github: https://github.com/casouri/eldoc-box
