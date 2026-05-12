@@ -3,7 +3,7 @@
 
 # Emacs
 .emacs.d/*
-!.emacs.d/init.el
+!.emacs.d/jemacs.org
 *~
 
 # Neovim
