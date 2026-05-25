@@ -1,10 +1,12 @@
 # MacOS
 .DS_Store
 
-# Emacs
-.emacs.d/*
-!.emacs.d/jemacs.org
+# Backup Files
 *~
+
+# Emacs
+emacs/*
+!emacs/init.el
 
 # Neovim
 lazy-lock.json
