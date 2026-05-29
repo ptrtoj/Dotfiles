@@ -54,7 +54,7 @@
   :hook
   (prog-mode . display-line-numbers-mode))
 
-;; Increase Frings
+;; Increase Fringes
 (use-package fringe
   :config
   (set-fringe-mode 10))
@@ -71,6 +71,11 @@
   :hook
   (prog-mode . display-fill-column-indicator-mode)
   (org-mode . display-fill-column-indicator-mode))
+
+;;  Show Column Number
+(use-package simple
+	:config
+	(column-number-mode 1))
 
 ;; Recent Files
 (use-package recentf
@@ -110,6 +115,35 @@
   :hook
   (prog-mode . electric-pair-mode))
 
+;; Fonts
+  (use-package faces
+    :config
+    (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
+    (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+    (add-to-list 'default-frame-alist '(font . "Berkeley Mono"))
+
+    ;; Fullscreen on Startup
+    ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+    ;; or set default width and height
+    ;;(add-to-list 'default-frame-alist (cons 'width 170))
+    ;;(add-to-list 'default-frame-alist (cons 'height 90))
+
+    ;; Transparency
+    ;; Emacs 29 introduced below, but doesn't work on Macos.
+    ;;(set-frame-parameter nil 'alpha-background 90)
+    ;;(add-to-list 'default-frame-alist '(alpha-background . 90))
+
+    ;; Rather this works (the old way).
+    (set-frame-parameter (selected-frame) 'alpha '(95 95))
+    (add-to-list 'default-frame-alist '(alpha 95 95)))
+
+;;  Revert Buffer Automatically
+(use-package autorevert
+	:diminish
+	:config
+	(global-auto-revert-mode t))
+
 ;; Eglot
 (use-package eglot
   :hook
@@ -121,16 +155,42 @@
 		("M-n" . 'flymake-goto-next-error)
 		("M-p" . 'flymake-goto-prev-error)))
 
+;; Spellcheck
+;; Dependencies
+;; Basically, 'use-package-ensure-system-package' should handle this(currently disabled),
+;; but always check if the dependencies are correctly installed or not.
+
+;;    - 'aspell' (or 'hunspell')
+;;    - And dictionary files, such as '.aff' & '.dic' (e.g. 'en_US.aff' and 'en_US.dic')
+;; Dictionary files should be placed in '/USER_HOME_DIR/Library/Spelling/' or '/Library/Spelling/'.
+;; However, 'homebrew' itself doesn't provide dictionaries for spell-checkers,
+;; so you have to download compatible dictionaries from other sources,
+;; such as, https://cgit.freedesktop.org/libreoffice/dictionaries/tree/
+;;
+;; Code Example: download '*.aff' & '*.dic'
+;;
+;; $ cd ~/Library/Spelling/
+;; $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.aff
+;; $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.dic
+(use-package flyspell
+	:diminish
+;;	;;:config
+;;	;;(setq ispell-program-name "hunspell")
+;;	;;(setq ispell-local-dictionary "en_US")
+	:hook
+	(prog-mode . flyspell-prog-mode)
+	(text-mode . flyspell-mode))
+
+;; Editorconfig
+(use-package editorconfig
+  :hook
+  (prog-mode . editorconfig-mode))
+
 ;; Which Key (Github: https://github.com/justbur/emacs-which-key )
 (use-package which-key
   :diminish
   :config
   (which-key-mode t))
-
-;; Colortheme
-(use-package custom
-  :config
-  (load-theme 'modus-operandi))
 
 ;; Package Manager
 (use-package package
@@ -209,32 +269,24 @@
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
+;; Color Theme (Github: https://github.com/catppuccin/emacs )
+(use-package catppuccin-theme
+  :ensure t
+  :config
+  (load-theme 'catppuccin t)
+  (setq catppuccin-flavor 'latte)	; light-theme
+  ;; (setq catppuccin-flavor 'mocha)
+  ;; (setq catppuccin-flavor 'macchiato)
+  ;;(setq catppuccin-flavor 'frappe)
+  (catppuccin-reload))
+;; or
+;; (use-package custom
+;;   :config
+;;   (load-theme 'modus-operandi))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;; DANGER AREA (Curretnly, not using these) ;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Fonts
-;;   (use-package faces
-;;     :config
-;;     (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
-;;     (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-;;     (add-to-list 'default-frame-alist '(font . "Berkeley Mono"))
-
-;;     ;; Fullscreen on Startup
-;;     ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-;;     ;; or set default width and height
-;;     (add-to-list 'default-frame-alist (cons 'width 170))
-;;     (add-to-list 'default-frame-alist (cons 'height 90))
-
-;;     ;; Transparency
-;;     ;; Emacs 29 introduced below, but doesn't work on Macos.
-;;     ;;(set-frame-parameter nil 'alpha-background 90)
-;;     ;;(add-to-list 'default-frame-alist '(alpha-background . 90))
-
-;;     ;; Rather this works (the old way).
-;;     (set-frame-parameter (selected-frame) 'alpha '(95 95))
-;;     (add-to-list 'default-frame-alist '(alpha 95 95)))
 
 ;; Auto Update (Github: https://github.com/rranelli/auto-package-update.el )
 ;; (use-package auto-package-update
@@ -253,17 +305,6 @@
 ;;   :after org
 ;;   :hook (org-mode . org-auto-tangle-mode))
 
-;; Color Theme (Github: https://github.com/catppuccin/emacs )
-;; (use-package catppuccin-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'catppuccin t)
-;;   ;; (setq catppuccin-flavor 'latte)	; light-theme
-;;   ;; (setq catppuccin-flavor 'mocha)
-;;   ;; (setq catppuccin-flavor 'macchiato)
-;;   (setq catppuccin-flavor 'frappe)
-;;   (catppuccin-reload))
-
 ;; Files
 ;; (use-package files
 ;;	:config
@@ -273,33 +314,6 @@
 ;;:custom
 ;; Prevent Emacs Generating Backup
 ;;(make-backup-files nil))
-
-;; Spellcheck
-;; Dependencies
-;; Basically, ~use-package-ensure-system-package~ should handle this(currently disabled),
-;; but always check if the dependencies are correctly installed or not.
-
-;;    - ~aspell~ (or ~hunspell~)
-;;    - And dictionary files, such as ~.aff~ & ~.dic~ (e.g. ~en_US.aff~ and ~en_US.dic~)
-;; Dictionary files should be placed in ~/USER_HOME_DIR/Library/Spelling/~ or ~/Library/Spelling/~.
-;; However, ~homebrew~ itself doesn't provide dictionaries for spell-checkers,
-;; so you have to download compatible dictionaries from other sources,
-;; such as, https://cgit.freedesktop.org/libreoffice/dictionaries/tree/
-;;
-;; Code Example: download '*.aff' & '*.dic'
-;;
-;; $ cd ~/Library/Spelling/
-;; $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.aff
-;; $ wget https://github.com/ropensci/hunspell/raw/master/inst/dict/en_US.dic
-;; (use-package flyspell
-;;	:diminish
-;;	;;:config
-;;	;;(setq ispell-program-name "hunspell")
-;;	;;(setq ispell-local-dictionary "en_US")
-;;	:hook
-;;	(emacs-lisp-mode . (lambda () (flyspell-prog-mode) (flyspell-buffer)))
-;;	(prog-mode . flyspell-prog-mode)
-;;	(text-mode . flyspell-buffer))
 
 ;; Prettify symbols
 ;; (use-package prog-mode
@@ -325,18 +339,6 @@
 ;;	(when (use-region-p))
 ;;	(libj/ui)
 ;;	(comment-region (region-beginning) (region-end)))
-
-;;  Show Column Number
-;; (use-package simple
-;;	:config
-;;	(column-number-mode 1))
-
-;;  Revert Buffer Automatically
-;; (use-package autorevert
-;;	:diminish (auto-revert-mode)
-;;	:config
-;;	(global-auto-revert-mode t))
-
 ;; Also, there are
 ;; - Try, https://github.com/larstvei/Try
 ;; - Ensure System Package, https://github.com/waymondo/use-package-ensure-system-package
@@ -345,5 +347,10 @@
 
 ;; 'outline-regexp' enables only showing 2 levels of headings.
 ;; (See this stack overflow answer - https://emacs.stackexchange.com/q/60420/40897)
+
+;; Considering
+;; - Treemacs
+;; - tab-bar-mode
+;; - Dashboard
 
 ;;; init.el ends here
