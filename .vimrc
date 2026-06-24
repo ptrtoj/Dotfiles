@@ -3,7 +3,7 @@
 
 " Default was 'nrformats=bin,octal,hex'
 "'CTRL-A' increments, and 'CRTL-X' decrements
-set nrformats-=octal			" increment as decimal, even with leading 0
+"set nrformats-=octal			" increment as decimal, even with leading 0
 
 " Enable filetype detection
 "filetype    on
@@ -19,28 +19,28 @@ syntax			on
 
 "set backspace       =indent,eol,start
 "set hidden
-set laststatus		=2
-set display		=lastline
+"set laststatus		=2
+"set display		=lastline
 
 set number
 set relativenumber
 
-set showmode
-set showcmd
+"set showmode
+"set showcmd
 "set wildmenu				" Default: on
 "set wildmode		=full
 
 "set incsearch
-set hlsearch				" ':noh' to turn off highlight
+"set hlsearch				" ':noh' to turn off highlight
 
 "set ttyfast				" Default: on
-set lazyredraw				" Default: off
+"set lazyredraw				" Default: off
 
 "set splitbelow
 "set splitright
 
 "set cursorline
-set colorcolumn		=80
+"set colorcolumn		=80
 "set wrapscan
 "set report		=0
 "set synmaxcol		=200
