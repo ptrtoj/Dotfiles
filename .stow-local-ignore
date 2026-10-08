@@ -18,5 +18,4 @@
 # Currently Do not using
 \.tmux.conf
 \.config/nvim
-\.emacs.d
 \.stowrc
