@@ -2,6 +2,13 @@
 # Defaults
 setopt HIST_SAVE_NO_DUPS
 
+# Security Measure
+# Any token typed inline, like export SOME_API_KEY=… or
+# curl -H "Authorization: …", is saved to ~/.zsh_history in
+# plain text. Add setopt HIST_IGNORE_SPACE and prefix sensitive
+# commands with a space.
+setopt HIST_IGNORE_SPACE
+
 # Plugins
 #source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 #source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -16,8 +23,8 @@ setopt HIST_SAVE_NO_DUPS
 #https://thevaluable.dev/zsh-install-configure-mouseless/
 
 # Exports
-export PATH="$HOME/.local/bin${PATH:+:$PATH}"
-export CPATH="$HOME/.local/bin${CPATH:+:$CPATH}"
+export PATH="${PATH:+$PATH:}$HOME/.local/bin"
+export CPATH="$HOME/.local/include${CPATH:+:$CPATH}"
 export LIBRARY_PATH="$HOME/.local/lib${LIBRARY_PATH:+:$LIBRARY_PATH}"
 export LD_LIBRARY_PATH="$HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 export C_INCLUDE_PATH="$HOME/.local/include${C_INCLUDE_PATH:+:$C_INCLUDE_PATH}"

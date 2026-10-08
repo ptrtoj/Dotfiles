@@ -13,9 +13,10 @@
 \.stow-local-ignore   # harmless to list the file itself
 
 # MacOS specific file
-.DS_Store
+\.DS_Store
 
 # Currently Do not using
-.tmux.conf
-.config/nvim
-.emacs.d
+\.tmux.conf
+\.config/nvim
+\.emacs.d
+\.stowrc

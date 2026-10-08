@@ -1,6 +1,11 @@
 # MacOS
 .DS_Store
 
+# GnuPG: track config only, never keys or keyrings
+.gnupg/*
+!.gnupg/gpg.conf
+!.gnupg/gpg-agent.conf
+
 # Backup Files
 *~
 
@@ -8,5 +13,6 @@
 .emacs.d/*
 !.emacs.d/init.el
 
-# Neovim
-lazy-lock.json
+# ~/.config: track only what's listed
+.config/*
+!.config/nvim/

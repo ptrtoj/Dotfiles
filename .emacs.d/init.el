@@ -30,10 +30,12 @@
 
 ;; Prevent Generating Custom Section in this File
 (use-package cus-edit
+  :config
+  (when (file-exists-p custom-file)
+    (load custom-file)
   :custom
   (custom-file (concat user-emacs-directory "custom.el"))
-  (when (file-exists-p custom-file)
-    (load custom-file)))
+  ))
 
 ;; Show URLs as a Clickable Link
 (use-package goto-addr
@@ -208,9 +210,10 @@
 ;; Fix MacOS Shell Path (Github: https://github.com/purcell/exec-path-from-shell )
 (use-package exec-path-from-shell
   :ensure t
-  :custom
+  :config
   (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
+    (exec-path-from-shell-initialize))
+  )
 
 ;; Treesitter
 (use-package tree-sitter
@@ -259,9 +262,9 @@
 (use-package orderless
   :ensure t
   :custom
-  (completion--styles '(oderless basic))
+  (completion-styles '(orderless basic))
   (completion-category-defaults nil)
-  (completion--category-overrides '((file (styles partial-completion)))))
+  (completion-category-overrides '((file (styles partial-completion)))))
 
 ;; Magit (Webpage: https://magit.vc )
 (use-package magit
