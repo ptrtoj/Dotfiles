@@ -1,0 +1,21 @@
+# Restore Defaults
+# version control
+\.git
+\.gitignore
+
+# docs at the package root only
+^/README.*
+^/LICENSE.*
+
+.+~          # editor backups
+\#.*\#       # emacs autosave files
+
+\.stow-local-ignore   # harmless to list the file itself
+
+# MacOS specific file
+.DS_Store
+
+# Currently Do not using
+.tmux.conf
+.config/nvim
+.emacs.d

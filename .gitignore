@@ -5,8 +5,8 @@
 *~
 
 # Emacs
-emacs/*
-!emacs/init.el
+.emacs.d/*
+!.emacs.d/init.el
 
 # Neovim
 lazy-lock.json
